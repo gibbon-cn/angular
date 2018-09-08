@@ -17,6 +17,8 @@ import {ViewEncapsulation} from './view';
 
 /**
  * Type of the Directive decorator / constructor function.
+ * 
+ * 指令装饰器/构造函数类型 
  */
 export interface DirectiveDecorator {
   /**
@@ -25,10 +27,14 @@ export interface DirectiveDecorator {
    * The options provide configuration metadata that determines
    * how the directive should be processed, instantiated and used at
    * runtime.
+   * 
+   * 将一个类标记为Angular指令。你可以定义自己的指令，为DOM元素附加定制化的行为。
+   * 这些选项所提供的配置元数据，将决定指令在运行时如何被处理、实例化和使用。
    *
    * Directive classes, like component classes, can implement
    * [life-cycle hooks](guide/lifecycle-hooks) to influence their configuration and behavior.
    *
+   * 指令类，例如组件类，可以实现生命周期钩子，以影响他们的配置和行为。
    *
    * @usageNotes
    * To define a directive, mark the class with the decorator and provide metadata.
@@ -72,6 +78,7 @@ export interface DirectiveDecorator {
 }
 
 export interface Directive {
+
   /**
    * The CSS selector that triggers the instantiation of a directive.
    *
@@ -95,12 +102,26 @@ export interface Directive {
    *   <input type="radio">
    * <form>
    * ```
-   *
+   * 
+   * CSS选择器，用于触发指令的实例化。
+   * 
+   * 通过以下一种形式来声明选择器：
+   * - element-name，通过元素名称选择
+   * - .class，通过类名选择
+   * - [attribule]，通过属性名选择
+   * - [attribute=value]，通过属性名和值来选择
+   * - :not(sub_selector)，只有当元素不匹配sub_selector时选择
+   * - selector1, selector2，两个选择器任意一个配置时选择
+   * 
+   * Angular只允许指令在不跨元素编辑的CSS选择器上触发。
+   * 
    */
   selector?: string;
 
   /**
    * Enumerates the set of data-bound input properties for a directive
+   * 
+   * 列举用于指令的数据绑定输入属性集合。
    *
    * Angular automatically updates input properties during change detection.
    * The `inputs` property defines a set of `directiveProperty` to `bindingProperty`
@@ -109,7 +130,15 @@ export interface Directive {
    * - `directiveProperty` specifies the component property where the value is written.
    * - `bindingProperty` specifies the DOM property where the value is read from.
    *
+   * Angular在检查到改变时，会自动更新输入属性。inputs属性定义了一组由“指令属性”到“绑定属性”的配置。
+   * 
+   * - 指令属性，定义了组件的属性，值将会写到这里。
+   * - 绑定属性，定义了DOM属性，值将会从这里读取。
+   * 
    * When `bindingProperty` is not provided, it is assumed to be equal to `directiveProperty`.
+   * 
+   * 如果没有提供绑定属性，则假定与指令属性相同。
+   * 
    * @usageNotes
    *
    * ### Example
@@ -144,6 +173,15 @@ export interface Directive {
    *
    * - `directiveProperty` specifies the component property that emits events.
    * - `bindingProperty` specifies the DOM property the event handler is attached to.
+   * 
+   * 列举事件绑定输出属性集合。
+   * 
+   * 当输出属性发出一个事件，在模板中附加到这个事件的事件处理器将被调用。
+   * 
+   * outputs属性定义了一组从指令属性到绑定属性的配置：
+   * 
+   * 指令属性：指定了将要发出事件的组件属性。
+   * 绑定属性：指定了事件处理器所附加到的DOM属性。
    *
    * @usageNotes
    *
@@ -297,15 +335,23 @@ export interface Directive {
   /**
    * Maps class properties to host element bindings for properties,
    * attributes, and events, using a set of key-value pairs.
-   *
+   * 
+   * 将类属性映射到宿主元素绑定，这些绑定用于属性、特性和事件，形式为一组键值对。
+   *  
    * Angular automatically checks host property bindings during change detection.
    * If a binding changes, Angular updates the directive's host element.
+   * 
+   * Angular在检查到变化时，自动检查属性绑定。如果一个绑定发生了改变，Angular更新指令的宿主元素。
    *
    * When the key is a property of the host element, the property value is
    * the propagated to the specified DOM property.
+   * 
+   * 当键为宿主元素的一个属性时，属性值广播到指定的DOM属性。
    *
    * When the key is a static attribute in the DOM, the attribute value
    * is propagated to the specified property in the host element.
+   * 
+   * 如果键为DOM中一个静态的attribute，属性值将广播到宿主元素指定的属性。
    *
    * For event handling:
    * - The key is the DOM event that the directive listens to.
@@ -315,6 +361,11 @@ export interface Directive {
    * statement evalueates to `false`, then `preventDefault` is applied on the DOM
    * event. A handler method can refer to the `$event` local variable.
    *
+   * 对于事件绑定：
+   * - 键为指令所监听的DOM事件。要监听全局事件，将目标加入到事件名称。目标可以为window、document或者body。
+   * - 值为当事件发生时所要执行的语句。如果语句执行结果为false，则preventDefault将施加于DOM事件。
+   * 处理器方法可以执行到$event局部变量。
+   * 
    */
   host?: {[key: string]: string};
 
@@ -322,13 +373,17 @@ export interface Directive {
    * Configures the [injector](guide/glossary#injector) of this
    * directive or component with a [token](guide/glossary#di-token)
    * that maps to a [provider](guide/glossary#provider) of a dependency.
+   * 
+   * 通过令牌类来配置该指令和组件的注入器，令牌映射到一个依赖的提供者。
+   * 
    */
   providers?: Provider[];
 
   /**
    * The name or names that can be used in the template to assign this directive to a variable.
    * For multiple names, use a comma-separated string.
-   *
+   * 
+   * 在模板中将该指令指派到一个变量所使用的名字。对于多个名字，使用逗号分隔的字符串。   * 
    */
   exportAs?: string;
 
@@ -338,6 +393,10 @@ export interface Directive {
    * Content queries are set before the `ngAfterContentInit` callback is called.
    * View queries are set before the `ngAfterViewInit` callback is called.
    *
+   *  配置将要注入到该指令的查询。
+   *  
+   *  内容查询在ngAfterContentInit回调被调用前被设置。
+   *  视图查询在ngAfterViewInit回调被调用前被设置。
    */
   queries?: {[key: string]: any};
 }
@@ -358,25 +417,37 @@ export interface ComponentDecorator {
    * Decorator that marks a class as an Angular component and provides configuration
    * metadata that determines how the component should be processed,
    * instantiated, and used at runtime.
+   * 
+   * 将一个类修饰为Angular组件的装饰器，提供配置元数据，并决定组件如何在运行时被处理、实例化和使用。
    *
    * Components are the most basic UI building block of an Angular app.
    * An Angular app contains a tree of Angular components.
+   * 
+   * 组件是Angular应用最为基本的UI构件模块。一个Angular应用包含Angular组件树。
    *
    * Angular components are a subset of directives, always associated with a template.
    * Unlike other directives, only one component can be instantiated per an element in a template.
+   * 
+   * Angualr组件是指令的子级，通常与模板关联在一起。与其他指令不同，在模板中，一个元素只能初始化一个组件。
    *
    * A component must belong to an NgModule in order for it to be available
    * to another component or application. To make it a member of an NgModule,
    * list it in the `declarations` field of the `@NgModule` metadata.
+   * 
+   * 为了让一个组件对于另一个组件或者应用可见，这个组件必须属于一个NgModule。为了是组件成为NgModule的承元，将组件列举在@NuModule元数据的declaration字段。
    *
    * Note that, in addition to these options for configuring a directive,
    * you can control a component's runtime behavior by implementing
    * life-cycle hooks. For more information, see the
    * [Lifecycle Hooks](guide/lifecycle-hooks) guide.
+   * 
+   * 注意，除了这些配置指令的选项，你还可以通过实现生命周期钩子来控制组件的运行时行为。
    *
-   * @usageNotes
+   * @usageNotes 
+   * 
+   * 使用帮助
    *
-   * ### Setting component inputs
+   * ### Setting component inputs 设置组件的输入
    *
    * The following example creates a component with two data-bound properties,
    * specified by the `inputs` value.
@@ -385,14 +456,14 @@ export interface ComponentDecorator {
    * </code-example>
    *
    *
-   * ### Setting component outputs
+   * ### Setting component outputs 设置组件的输出
    *
    * The following example shows two event emitters that emit on an interval. One
    * emits an output every second, while the other emits every five seconds.
    *
    * {@example core/ts/metadata/directives.ts region='component-output-interval'}
    *
-   * ### Injecting a class with a view provider
+   * ### Injecting a class with a view provider 通过视图提供者注入一个类
    *
    * The following simple example injects a class into a component
    * using the view provider specified in component metadata:
@@ -449,13 +520,17 @@ export interface Component extends Directive {
    * The strategy is one of:
    * - `ChangeDetectionStrategy#OnPush` sets the strategy to `CheckOnce` (on demand).
    * - `ChangeDetectionStrategy#Default` sets the strategy to `CheckAlways`.
+   * 
+   * 改变监听策略：
+   *  检查一次；（按需）
+   *  总是检查；
    */
   changeDetection?: ChangeDetectionStrategy;
 
   /**
    * Defines the set of injectable objects that are visible to its view DOM children.
    * See [example](#injecting-a-class-with-a-view-provider).
-   *
+   * 定义对视图DOM后代可见的可注入的对象
    */
   viewProviders?: Provider[];
 
@@ -464,33 +539,38 @@ export interface Component extends Directive {
    * The component must be able to resolve relative URLs for templates and styles.
    * SystemJS exposes the `__moduleName` variable within each module.
    * In CommonJS, this can  be set to `module.id`.
-   *
+   * 包含该组件的模块的标识
    */
   moduleId?: string;
 
   /**
    * The URL of a template file for an Angular component. If provided,
    * do not supply an inline template using `template`.
-   *
+   * Angular组件的模板文件URL，与template互斥
+   * 
    */
   templateUrl?: string;
 
   /**
    * An inline template for an Angular component. If provided,
    * do not supply a template file using `templateUrl`.
-   *
+   * Angular组件的inline模板
+   * 
    */
   template?: string;
 
   /**
    * One or more URLs for files containing CSS stylesheets to use
    * in this component.
+   * 本组件所使用的CSS文件URL（一个或多个）
+   * 
    */
   styleUrls?: string[];
 
   /**
    * One or more inline CSS stylesheets to use
    * in this component.
+   * 本组件所使用的内置CSS样式文件（一个或多个）
    */
   styles?: string[];
 
@@ -498,7 +578,7 @@ export interface Component extends Directive {
    * One or more animation `trigger()` calls, containing
    * `state()` and `transition()` definitions.
    * See the [Animations guide](/guide/animations) and animations API documentation.
-   *
+   * 动画
    */
   animations?: any[];
 
@@ -516,11 +596,21 @@ export interface Component extends Directive {
    *
    * If the policy is set to `ViewEncapsulation.Emulated` and the component has no `styles`
    * or `styleUrls` specified, the policy is automatically switched to `ViewEncapsulation.None`.
+   * 
+   * 视图包裹策略：
+   *  Native，原生，使用影子根，只适用于平台上原生可用
+   *  Emulated，模仿，使用经过调试的CSS来模仿原生行为
+   *  None，使用全局CSS，不适用任何包裹
+   * 
+   * 如果不定义，则取自CompilerOptions，默认值为“模仿”。
+   * 
+   * 如果策略设定为“模范”，而组件没有指定styles或者styleUrls，则策略自动切换到None。
    */
   encapsulation?: ViewEncapsulation;
 
   /**
    * Overrides the default encapsulation start and end delimiters (`{{` and `}}`)
+   * 篡改：覆盖缺省的包裹起始和终止分隔符{{,}}
    */
   interpolation?: [string, string];
 
@@ -529,6 +619,8 @@ export interface Component extends Directive {
    * this component. For each component listed here,
    * Angular creates a {@link ComponentFactory} and stores it in the
    * {@link ComponentFactoryResolver}.
+   * 
+   * 需要与当前组件一起编译的组件集合。对于每个列举在这里的组件，Angular会创建一个ComponentFactory，并将其存储在ComponentFactoryResolver
    */
   entryComponents?: Array<Type<any>|any[]>;
 
@@ -537,12 +629,15 @@ export interface Component extends Directive {
    * from the compiled template. Whitespace characters are those matching the `\s`
    * character class in JavaScript regular expressions. Default is false, unless
    * overridden in compiler options.
+   * 
+   * 对于潜在的多余的空格，如果为真，则保留，如果为假，在去除。默认为假，除非在编译器选项中覆盖。
    */
   preserveWhitespaces?: boolean;
 }
 
 /**
  * Component decorator and metadata.
+ * 
  *
  * @usageNotes
  *
