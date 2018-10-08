@@ -12,9 +12,10 @@ import {DebugContext} from '../view';
 import {DebugRenderer2, DebugRendererFactory2} from '../view/services';
 
 import * as di from './di';
-import {NG_HOST_SYMBOL, _getViewData} from './instructions';
-import {LElementNode} from './interfaces/node';
-import {CONTEXT, DIRECTIVES, LViewData, TVIEW} from './interfaces/view';
+import {_getViewData} from './instructions';
+import {TNodeFlags} from './interfaces/node';
+import {CONTEXT, LViewData, TVIEW} from './interfaces/view';
+
 
 /**
  * Adapts the DebugRendererFactory2 to create a DebugRenderer2 specific for IVY.
@@ -46,12 +47,8 @@ class Render3DebugContext implements DebugContext {
 
   get injector(): Injector {
     if (this.nodeIndex !== null) {
-      const lElementNode: LElementNode = this.view[this.nodeIndex];
-      const nodeInjector = lElementNode.nodeInjector;
-
-      if (nodeInjector) {
-        return new di.NodeInjector(nodeInjector);
-      }
+      const tNode = this.view[TVIEW].data[this.nodeIndex];
+      return new di.NodeInjector(tNode, this.view);
     }
     return Injector.NULL;
   }
@@ -72,25 +69,16 @@ class Render3DebugContext implements DebugContext {
 
   // TODO(vicb): add view providers when supported
   get providerTokens(): any[] {
-    const matchedDirectives: any[] = [];
-
     // TODO(vicb): why/when
-    if (this.nodeIndex === null) {
-      return matchedDirectives;
+    const directiveDefs = this.view[TVIEW].directives;
+    if (this.nodeIndex === null || directiveDefs == null) {
+      return [];
     }
 
-    const directives = this.view[DIRECTIVES];
-
-    if (directives) {
-      const currentNode = this.view[this.nodeIndex];
-      for (let dirIndex = 0; dirIndex < directives.length; dirIndex++) {
-        const directive = directives[dirIndex];
-        if (directive[NG_HOST_SYMBOL] === currentNode) {
-          matchedDirectives.push(directive.constructor);
-        }
-      }
-    }
-    return matchedDirectives;
+    const currentTNode = this.view[TVIEW].data[this.nodeIndex];
+    const dirStart = currentTNode >> TNodeFlags.DirectiveStartingIndexShift;
+    const dirEnd = dirStart + (currentTNode & TNodeFlags.DirectiveCountMask);
+    return directiveDefs.slice(dirStart, dirEnd);
   }
 
   get references(): {[key: string]: any} {

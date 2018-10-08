@@ -651,6 +651,9 @@
     "name": "EmitterVisitorContext"
   },
   {
+    "name": "EmptyErrorImpl"
+  },
+  {
     "name": "EmptyExpr"
   },
   {
@@ -709,12 +712,6 @@
   },
   {
     "name": "FunctionExpr"
-  },
-  {
-    "name": "GET_PROPERTY_NAME"
-  },
-  {
-    "name": "GET_PROPERTY_NAME$2"
   },
   {
     "name": "GOOG_GET_MSG"
@@ -1002,6 +999,9 @@
     "name": "NG_CONTENT_SELECT_ATTR"
   },
   {
+    "name": "NG_INJECTABLE_DEF"
+  },
+  {
     "name": "NG_NON_BINDABLE_ATTR"
   },
   {
@@ -1099,6 +1099,9 @@
   },
   {
     "name": "ObjectUnsubscribedError"
+  },
+  {
+    "name": "ObjectUnsubscribedErrorImpl"
   },
   {
     "name": "Observable"
@@ -1242,7 +1245,19 @@
     "name": "Quote"
   },
   {
+    "name": "R3_CHANGE_DETECTOR_REF_FACTORY$1"
+  },
+  {
     "name": "R3_COMPILE_INJECTABLE$1"
+  },
+  {
+    "name": "R3_ELEMENT_REF_FACTORY$1"
+  },
+  {
+    "name": "R3_TEMPLATE_REF_FACTORY$1"
+  },
+  {
+    "name": "R3_VIEW_CONTAINER_REF_FACTORY$1"
   },
   {
     "name": "ReadKeyExpr"
@@ -1582,6 +1597,9 @@
   },
   {
     "name": "UnsubscriptionError"
+  },
+  {
+    "name": "UnsubscriptionErrorImpl"
   },
   {
     "name": "UrlResolver"
@@ -1929,22 +1947,16 @@
     "name": "__extends$5"
   },
   {
-    "name": "__extends$6"
+    "name": "__extends$l"
   },
   {
-    "name": "__extends$7"
+    "name": "__extends$m"
   },
   {
-    "name": "__extends$q"
+    "name": "__extends$n"
   },
   {
-    "name": "__extends$r"
-  },
-  {
-    "name": "__extends$s"
-  },
-  {
-    "name": "__extends$u"
+    "name": "__extends$p"
   },
   {
     "name": "__metadata"
@@ -2353,6 +2365,9 @@
   },
   {
     "name": "camelCaseToDashCase"
+  },
+  {
+    "name": "canReportError"
   },
   {
     "name": "checkAndUpdateBinding"
@@ -2940,9 +2955,6 @@
     "name": "getClosureSafeProperty"
   },
   {
-    "name": "getClosureSafeProperty$1"
-  },
-  {
     "name": "getComponentViewDefinitionFactory"
   },
   {
@@ -2968,6 +2980,9 @@
   },
   {
     "name": "getHtmlTagDefinition"
+  },
+  {
+    "name": "getInjectableDef"
   },
   {
     "name": "getNgZone"
@@ -3150,6 +3165,9 @@
     "name": "isIdentifierStart"
   },
   {
+    "name": "isInteropObservable"
+  },
+  {
     "name": "isIterable"
   },
   {
@@ -3183,9 +3201,6 @@
     "name": "isObject"
   },
   {
-    "name": "isObservable"
-  },
-  {
     "name": "isObservable$1"
   },
   {
@@ -3211,9 +3226,6 @@
   },
   {
     "name": "isStyleUrlResolvable"
-  },
-  {
-    "name": "isTrustedSubscriber"
   },
   {
     "name": "isType"
@@ -3391,6 +3403,9 @@
   },
   {
     "name": "noop$3"
+  },
+  {
+    "name": "noopFactory"
   },
   {
     "name": "noopScope"

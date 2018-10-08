@@ -10,11 +10,12 @@ import './ng_dev_mode';
 
 import {ChangeDetectionStrategy} from '../change_detection/constants';
 import {Provider} from '../di/provider';
-import {NgModuleDef, NgModuleDefInternal} from '../metadata/ng_module';
+import {NgModuleDef} from '../metadata/ng_module';
 import {ViewEncapsulation} from '../metadata/view';
 import {Type} from '../type';
 
-import {BaseDef, ComponentDefFeature, ComponentDefInternal, ComponentQuery, ComponentTemplate, ComponentType, DirectiveDefFeature, DirectiveDefInternal, DirectiveType, DirectiveTypesOrFactory, PipeDefInternal, PipeType, PipeTypesOrFactory} from './interfaces/definition';
+import {NG_COMPONENT_DEF, NG_DIRECTIVE_DEF, NG_MODULE_DEF, NG_PIPE_DEF} from './fields';
+import {BaseDef, ComponentDef, ComponentDefFeature, ComponentQuery, ComponentTemplate, ComponentType, DirectiveDef, DirectiveDefFeature, DirectiveType, DirectiveTypesOrFactory, PipeDef, PipeType, PipeTypesOrFactory} from './interfaces/definition';
 import {CssSelectorList, SelectorFlags} from './interfaces/projection';
 
 export const EMPTY: {} = {};
@@ -262,6 +263,11 @@ export function defineComponent<T>(componentDefinition: {
    * `PipeDefs`s. The function is necessary to be able to support forward declarations.
    */
   pipes?: PipeTypesOrFactory | null;
+
+  /**
+   * Registry of the animation triggers present on the component that will be used by the view.
+   */
+  animations?: any[] | null;
 }): never {
   const type = componentDefinition.type;
   const pipeTypes = componentDefinition.pipes !;
@@ -269,7 +275,12 @@ export function defineComponent<T>(componentDefinition: {
   const declaredInputs: {[key: string]: string} = {} as any;
   const encapsulation = componentDefinition.encapsulation || ViewEncapsulation.Emulated;
   const styles: string[] = componentDefinition.styles || EMPTY_ARRAY;
-  const def: ComponentDefInternal<any> = {
+  const animations: any[]|null = componentDefinition.animations || null;
+  let data = componentDefinition.data || {};
+  if (animations) {
+    data.animations = animations;
+  }
+  const def: ComponentDef<any> = {
     type: type,
     diPublic: null,
     consts: componentDefinition.consts,
@@ -303,7 +314,7 @@ export function defineComponent<T>(componentDefinition: {
     selectors: componentDefinition.selectors,
     viewQuery: componentDefinition.viewQuery || null,
     features: componentDefinition.features || null,
-    data: componentDefinition.data || EMPTY,
+    data,
     // TODO(misko): convert ViewEncapsulation into const enum so that it can be used directly in the
     // next line. Also `None` should be 0 not 2.
     encapsulation,
@@ -317,24 +328,24 @@ export function defineComponent<T>(componentDefinition: {
 }
 
 export function extractDirectiveDef(type: DirectiveType<any>& ComponentType<any>):
-    DirectiveDefInternal<any>|ComponentDefInternal<any> {
-  const def = type.ngComponentDef || type.ngDirectiveDef;
+    DirectiveDef<any>|ComponentDef<any> {
+  const def = getComponentDef(type) || getDirectiveDef(type);
   if (ngDevMode && !def) {
     throw new Error(`'${type.name}' is neither 'ComponentType' or 'DirectiveType'.`);
   }
-  return def;
+  return def !;
 }
 
-export function extractPipeDef(type: PipeType<any>): PipeDefInternal<any> {
-  const def = type.ngPipeDef;
+export function extractPipeDef(type: PipeType<any>): PipeDef<any> {
+  const def = getPipeDef(type);
   if (ngDevMode && !def) {
     throw new Error(`'${type.name}' is not a 'PipeType'.`);
   }
-  return def;
+  return def !;
 }
 
-export function defineNgModule<T>(def: {type: T} & Partial<NgModuleDef<T, any, any, any>>): never {
-  const res: NgModuleDefInternal<T> = {
+export function defineNgModule<T>(def: {type: T} & Partial<NgModuleDef<T>>): never {
+  const res: NgModuleDef<T> = {
     type: def.type,
     bootstrap: def.bootstrap || EMPTY_ARRAY,
     declarations: def.declarations || EMPTY_ARRAY,
@@ -645,10 +656,32 @@ export function definePipe<T>(pipeDef: {
   /** Whether the pipe is pure. */
   pure?: boolean
 }): never {
-  return (<PipeDefInternal<T>>{
+  return (<PipeDef<T>>{
     name: pipeDef.name,
     factory: pipeDef.factory,
     pure: pipeDef.pure !== false,
     onDestroy: pipeDef.type.prototype.ngOnDestroy || null
   }) as never;
+}
+
+/**
+ * The following getter methods retrieve the definition form the type. Currently the retrieval
+ * honors inheritance, but in the future we may change the rule to require that definitions are
+ * explicit. This would require some sort of migration strategy.
+ */
+
+export function getComponentDef<T>(type: any): ComponentDef<T>|null {
+  return (type as any)[NG_COMPONENT_DEF] || null;
+}
+
+export function getDirectiveDef<T>(type: any): DirectiveDef<T>|null {
+  return (type as any)[NG_DIRECTIVE_DEF] || null;
+}
+
+export function getPipeDef<T>(type: any): PipeDef<T>|null {
+  return (type as any)[NG_PIPE_DEF] || null;
+}
+
+export function getNgModuleDef<T>(type: any): NgModuleDef<T>|null {
+  return (type as any)[NG_MODULE_DEF] || null;
 }

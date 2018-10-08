@@ -27,9 +27,6 @@
     "name": "ChangeDetectionStrategy"
   },
   {
-    "name": "ChangeDetectorRef"
-  },
-  {
     "name": "DECLARATION_VIEW"
   },
   {
@@ -51,13 +48,10 @@
     "name": "ElementRef"
   },
   {
-    "name": "ElementRef$1"
+    "name": "EmptyErrorImpl"
   },
   {
     "name": "FLAGS"
-  },
-  {
-    "name": "HEADER_FILLER"
   },
   {
     "name": "HEADER_OFFSET"
@@ -67,6 +61,9 @@
   },
   {
     "name": "INJECTOR$1"
+  },
+  {
+    "name": "INJECTOR_SIZE"
   },
   {
     "name": "IterableChangeRecord_"
@@ -81,10 +78,19 @@
     "name": "NEXT"
   },
   {
+    "name": "NG_COMPONENT_DEF"
+  },
+  {
+    "name": "NG_DIRECTIVE_DEF"
+  },
+  {
     "name": "NG_ELEMENT_ID"
   },
   {
-    "name": "NG_HOST_SYMBOL"
+    "name": "NG_INJECTABLE_DEF"
+  },
+  {
+    "name": "NG_PIPE_DEF"
   },
   {
     "name": "NG_PROJECT_AS_ATTR_NAME"
@@ -114,6 +120,9 @@
     "name": "NullInjector"
   },
   {
+    "name": "ObjectUnsubscribedErrorImpl"
+  },
+  {
     "name": "Optional"
   },
   {
@@ -123,10 +132,22 @@
     "name": "PARENT"
   },
   {
+    "name": "PARENT_INJECTOR"
+  },
+  {
     "name": "PublicFeature"
   },
   {
     "name": "QUERIES"
+  },
+  {
+    "name": "R3_ELEMENT_REF_FACTORY"
+  },
+  {
+    "name": "R3_TEMPLATE_REF_FACTORY"
+  },
+  {
+    "name": "R3_VIEW_CONTAINER_REF_FACTORY"
   },
   {
     "name": "RENDERER"
@@ -153,13 +174,13 @@
     "name": "TAIL"
   },
   {
+    "name": "TNODE"
+  },
+  {
     "name": "TVIEW"
   },
   {
     "name": "TemplateRef"
-  },
-  {
-    "name": "TemplateRef$1"
   },
   {
     "name": "ToDoAppComponent_footer_Template_6"
@@ -186,13 +207,13 @@
     "name": "TodoStore"
   },
   {
+    "name": "UnsubscriptionErrorImpl"
+  },
+  {
     "name": "VIEWS"
   },
   {
     "name": "ViewContainerRef"
-  },
-  {
-    "name": "ViewContainerRef$1"
   },
   {
     "name": "ViewEncapsulation$1"
@@ -211,6 +232,9 @@
   },
   {
     "name": "_THROW_IF_NOT_FOUND"
+  },
+  {
+    "name": "__extends"
   },
   {
     "name": "__read"
@@ -303,7 +327,7 @@
     "name": "_devMode"
   },
   {
-    "name": "_getComponentHostLElementNode"
+    "name": "_getViewData"
   },
   {
     "name": "_global"
@@ -333,7 +357,7 @@
     "name": "assertTemplate"
   },
   {
-    "name": "attachLViewDataToNode"
+    "name": "attachPatchData"
   },
   {
     "name": "baseDirectiveCreate"
@@ -351,10 +375,7 @@
     "name": "bloomAdd"
   },
   {
-    "name": "bloomFindPossibleInjector"
-  },
-  {
-    "name": "bloomHashBit"
+    "name": "bloomHashBitOrFactory"
   },
   {
     "name": "cacheMatchingDirectivesForNode"
@@ -393,16 +414,25 @@
     "name": "contextViewData"
   },
   {
+    "name": "createContainerRef"
+  },
+  {
     "name": "createDirectivesAndLocals"
   },
   {
-    "name": "createEmbeddedViewNode"
+    "name": "createElementRef"
+  },
+  {
+    "name": "createEmbeddedViewAndNode"
+  },
+  {
+    "name": "createEmptyStylingContext"
   },
   {
     "name": "createLContainer"
   },
   {
-    "name": "createLNode"
+    "name": "createLContext"
   },
   {
     "name": "createLNodeObject"
@@ -411,7 +441,13 @@
     "name": "createLViewData"
   },
   {
+    "name": "createNodeAtIndex"
+  },
+  {
     "name": "createOutput$1"
+  },
+  {
+    "name": "createRootComponent"
   },
   {
     "name": "createRootContext"
@@ -424,6 +460,9 @@
   },
   {
     "name": "createTView"
+  },
+  {
+    "name": "createTemplateRef"
   },
   {
     "name": "createTextNode"
@@ -516,6 +555,9 @@
     "name": "executePipeOnDestroys"
   },
   {
+    "name": "extendStatics"
+  },
+  {
     "name": "extractDirectiveDef"
   },
   {
@@ -525,10 +567,13 @@
     "name": "findAttrIndexInNode"
   },
   {
-    "name": "findComponentHost"
+    "name": "findComponentView"
   },
   {
     "name": "findDirectiveMatches"
+  },
+  {
+    "name": "findViaComponent"
   },
   {
     "name": "firstTemplatePass"
@@ -540,13 +585,22 @@
     "name": "generatePropertyAliases"
   },
   {
-    "name": "getChildLNode"
+    "name": "getBeforeNodeForView"
   },
   {
     "name": "getCleanup"
   },
   {
-    "name": "getClosestComponentAncestor"
+    "name": "getClosureSafeProperty"
+  },
+  {
+    "name": "getComponentDef"
+  },
+  {
+    "name": "getContainerNode"
+  },
+  {
+    "name": "getContainerRenderParent"
   },
   {
     "name": "getCurrentSanitizer"
@@ -555,10 +609,31 @@
     "name": "getCurrentView"
   },
   {
+    "name": "getDirectiveDef"
+  },
+  {
+    "name": "getHighestElementContainer"
+  },
+  {
+    "name": "getHostElementNode"
+  },
+  {
     "name": "getInitialIndex"
   },
   {
     "name": "getInitialValue"
+  },
+  {
+    "name": "getInjectableDef"
+  },
+  {
+    "name": "getInjectorIndex"
+  },
+  {
+    "name": "getLElementFromComponent"
+  },
+  {
+    "name": "getLNode"
   },
   {
     "name": "getLViewChild"
@@ -568,21 +643,6 @@
   },
   {
     "name": "getMultiStartIndex"
-  },
-  {
-    "name": "getNextLNode"
-  },
-  {
-    "name": "getOrCreateChangeDetectorRef"
-  },
-  {
-    "name": "getOrCreateContainerRef"
-  },
-  {
-    "name": "getOrCreateElementRef"
-  },
-  {
-    "name": "getOrCreateHostChangeDetector"
   },
   {
     "name": "getOrCreateInjectable"
@@ -600,13 +660,19 @@
     "name": "getOrCreateTView"
   },
   {
-    "name": "getOrCreateTemplateRef"
+    "name": "getParentInjectorLocation"
+  },
+  {
+    "name": "getParentInjectorView"
   },
   {
     "name": "getParentLNode"
   },
   {
     "name": "getParentState"
+  },
+  {
+    "name": "getPipeDef"
   },
   {
     "name": "getPointers"
@@ -616,6 +682,9 @@
   },
   {
     "name": "getPreviousOrParentNode"
+  },
+  {
+    "name": "getPreviousOrParentTNode"
   },
   {
     "name": "getProp"
@@ -633,9 +702,6 @@
     "name": "getRendererFactory"
   },
   {
-    "name": "getRootView"
-  },
-  {
     "name": "getStyleSanitizer"
   },
   {
@@ -643,6 +709,9 @@
   },
   {
     "name": "getSymbolIterator"
+  },
+  {
+    "name": "getTNode"
   },
   {
     "name": "getTViewCleanup"
@@ -663,16 +732,19 @@
     "name": "hostElement"
   },
   {
-    "name": "initChangeDetectorIfExisting"
+    "name": "inject"
   },
   {
-    "name": "inject"
+    "name": "injectElementRef"
   },
   {
     "name": "injectTemplateRef"
   },
   {
     "name": "injectViewContainerRef"
+  },
+  {
+    "name": "injectorHasToken"
   },
   {
     "name": "insertView"
@@ -685,9 +757,6 @@
   },
   {
     "name": "invertObject"
-  },
-  {
-    "name": "isComponent"
   },
   {
     "name": "isContentQueryHost"
@@ -759,6 +828,9 @@
     "name": "makeParamDecorator"
   },
   {
+    "name": "markDirty"
+  },
+  {
     "name": "markDirtyIfOnPush"
   },
   {
@@ -811,6 +883,12 @@
   },
   {
     "name": "readElementValue"
+  },
+  {
+    "name": "readPatchedData"
+  },
+  {
+    "name": "readPatchedLViewData"
   },
   {
     "name": "reference"
@@ -867,6 +945,9 @@
     "name": "scheduleTick"
   },
   {
+    "name": "searchDirectivesOnInjector"
+  },
+  {
     "name": "searchMatchesQueuedForCreation"
   },
   {
@@ -880,6 +961,9 @@
   },
   {
     "name": "setDirty"
+  },
+  {
+    "name": "setEnvironment"
   },
   {
     "name": "setFlag"
@@ -903,6 +987,9 @@
     "name": "setUpAttributes"
   },
   {
+    "name": "setUpBloom"
+  },
+  {
     "name": "setValue"
   },
   {
@@ -916,6 +1003,9 @@
   },
   {
     "name": "stringify$2"
+  },
+  {
+    "name": "syncViewWithBlueprint"
   },
   {
     "name": "template"
@@ -957,15 +1047,12 @@
     "name": "viewAttached"
   },
   {
-    "name": "walkLNodeTree"
+    "name": "walkTNodeTree"
   },
   {
     "name": "walkUpViews"
   },
   {
-    "name": "wrapListenerWithDirtyAndDefault"
-  },
-  {
-    "name": "wrapListenerWithDirtyLogic"
+    "name": "wrapListenerWithPreventDefault"
   }
 ]

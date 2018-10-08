@@ -282,7 +282,7 @@
     "name": "ElementRef"
   },
   {
-    "name": "ElementRef$1"
+    "name": "EmptyErrorImpl"
   },
   {
     "name": "EmulatedEncapsulationDomRenderer2"
@@ -312,9 +312,6 @@
     "name": "FormatWidth"
   },
   {
-    "name": "GET_PROPERTY_NAME"
-  },
-  {
     "name": "GROUP_SEP"
   },
   {
@@ -322,9 +319,6 @@
   },
   {
     "name": "HAMMER_LOADER"
-  },
-  {
-    "name": "HEADER_FILLER"
   },
   {
     "name": "HEADER_OFFSET"
@@ -355,6 +349,9 @@
   },
   {
     "name": "INJECTOR$1"
+  },
+  {
+    "name": "INJECTOR_SIZE"
   },
   {
     "name": "INSPECT_GLOBAL_NAME"
@@ -462,10 +459,25 @@
     "name": "NEXT"
   },
   {
+    "name": "NG_COMPONENT_DEF"
+  },
+  {
+    "name": "NG_DIRECTIVE_DEF"
+  },
+  {
     "name": "NG_ELEMENT_ID"
   },
   {
-    "name": "NG_HOST_SYMBOL"
+    "name": "NG_INJECTABLE_DEF"
+  },
+  {
+    "name": "NG_INJECTOR_DEF"
+  },
+  {
+    "name": "NG_MODULE_DEF"
+  },
+  {
+    "name": "NG_PIPE_DEF"
   },
   {
     "name": "NG_PROJECT_AS_ATTR_NAME"
@@ -591,6 +603,9 @@
     "name": "ObjectUnsubscribedError"
   },
   {
+    "name": "ObjectUnsubscribedErrorImpl"
+  },
+  {
     "name": "Observable"
   },
   {
@@ -607,6 +622,9 @@
   },
   {
     "name": "PARENT"
+  },
+  {
+    "name": "PARENT_INJECTOR"
   },
   {
     "name": "PATTERN_SEP"
@@ -649,6 +667,18 @@
   },
   {
     "name": "R3Injector"
+  },
+  {
+    "name": "R3_CHANGE_DETECTOR_REF_FACTORY"
+  },
+  {
+    "name": "R3_ELEMENT_REF_FACTORY"
+  },
+  {
+    "name": "R3_TEMPLATE_REF_FACTORY"
+  },
+  {
+    "name": "R3_VIEW_CONTAINER_REF_FACTORY"
   },
   {
     "name": "REMOVE_EVENT_LISTENER"
@@ -789,6 +819,9 @@
     "name": "THURSDAY"
   },
   {
+    "name": "TNODE"
+  },
+  {
     "name": "TRANSITION_ID"
   },
   {
@@ -796,9 +829,6 @@
   },
   {
     "name": "TemplateRef"
-  },
-  {
-    "name": "TemplateRef$1"
   },
   {
     "name": "Testability"
@@ -858,6 +888,9 @@
     "name": "UnsubscriptionError"
   },
   {
+    "name": "UnsubscriptionErrorImpl"
+  },
+  {
     "name": "UpperCasePipe"
   },
   {
@@ -877,9 +910,6 @@
   },
   {
     "name": "ViewContainerRef"
-  },
-  {
-    "name": "ViewContainerRef$1"
   },
   {
     "name": "ViewEncapsulation$1"
@@ -942,22 +972,16 @@
     "name": "__extends$5"
   },
   {
-    "name": "__extends$6"
+    "name": "__extends$l"
   },
   {
-    "name": "__extends$7"
+    "name": "__extends$m"
   },
   {
-    "name": "__extends$q"
+    "name": "__extends$n"
   },
   {
-    "name": "__extends$r"
-  },
-  {
-    "name": "__extends$s"
-  },
-  {
-    "name": "__extends$u"
+    "name": "__extends$p"
   },
   {
     "name": "__read"
@@ -1077,7 +1101,7 @@
     "name": "_enable_super_gross_mode_that_will_cause_bad_things"
   },
   {
-    "name": "_getComponentHostLElementNode"
+    "name": "_getViewData"
   },
   {
     "name": "_global"
@@ -1161,7 +1185,7 @@
     "name": "assertTemplate"
   },
   {
-    "name": "attachLViewDataToNode"
+    "name": "attachPatchData"
   },
   {
     "name": "baseDirectiveCreate"
@@ -1185,10 +1209,7 @@
     "name": "bloomAdd"
   },
   {
-    "name": "bloomFindPossibleInjector"
-  },
-  {
-    "name": "bloomHashBit"
+    "name": "bloomHashBitOrFactory"
   },
   {
     "name": "cacheMatchingDirectivesForNode"
@@ -1207,6 +1228,9 @@
   },
   {
     "name": "canInsertNativeNode"
+  },
+  {
+    "name": "canReportError"
   },
   {
     "name": "checkFullData"
@@ -1263,10 +1287,19 @@
     "name": "couldBeInjectableType"
   },
   {
+    "name": "createContainerRef"
+  },
+  {
     "name": "createDirectivesAndLocals"
   },
   {
-    "name": "createEmbeddedViewNode"
+    "name": "createElementRef"
+  },
+  {
+    "name": "createEmbeddedViewAndNode"
+  },
+  {
+    "name": "createEmptyStylingContext"
   },
   {
     "name": "createInjector"
@@ -1275,13 +1308,16 @@
     "name": "createLContainer"
   },
   {
-    "name": "createLNode"
+    "name": "createLContext"
   },
   {
     "name": "createLNodeObject"
   },
   {
     "name": "createLViewData"
+  },
+  {
+    "name": "createNodeAtIndex"
   },
   {
     "name": "createOutput$1"
@@ -1291,6 +1327,9 @@
   },
   {
     "name": "createPlatformFactory"
+  },
+  {
+    "name": "createRootComponent"
   },
   {
     "name": "createRootContext"
@@ -1308,6 +1347,9 @@
     "name": "createTView"
   },
   {
+    "name": "createTemplateRef"
+  },
+  {
     "name": "createTextNode"
   },
   {
@@ -1315,6 +1357,9 @@
   },
   {
     "name": "createViewQuery"
+  },
+  {
+    "name": "createViewRef"
   },
   {
     "name": "dateGetter"
@@ -1467,13 +1512,16 @@
     "name": "findAttrIndexInNode"
   },
   {
-    "name": "findComponentHost"
+    "name": "findComponentView"
   },
   {
     "name": "findDirectiveMatches"
   },
   {
     "name": "findLocaleData"
+  },
+  {
+    "name": "findViaComponent"
   },
   {
     "name": "firstTemplatePass"
@@ -1539,16 +1587,22 @@
     "name": "getBaseElementHref"
   },
   {
-    "name": "getChildLNode"
+    "name": "getBeforeNodeForView"
   },
   {
     "name": "getCleanup"
   },
   {
-    "name": "getClosestComponentAncestor"
+    "name": "getClosureSafeProperty"
   },
   {
-    "name": "getClosureSafeProperty"
+    "name": "getComponentDef"
+  },
+  {
+    "name": "getContainerNode"
+  },
+  {
+    "name": "getContainerRenderParent"
   },
   {
     "name": "getCurrencySymbol"
@@ -1578,16 +1632,40 @@
     "name": "getDebugNode"
   },
   {
+    "name": "getDirectiveDef"
+  },
+  {
     "name": "getErrorLogger"
   },
   {
     "name": "getFirstThursdayOfYear"
   },
   {
+    "name": "getHighestElementContainer"
+  },
+  {
+    "name": "getHostElementNode"
+  },
+  {
     "name": "getInitialIndex"
   },
   {
     "name": "getInitialValue"
+  },
+  {
+    "name": "getInjectableDef"
+  },
+  {
+    "name": "getInjectorDef"
+  },
+  {
+    "name": "getInjectorIndex"
+  },
+  {
+    "name": "getLElementFromComponent"
+  },
+  {
+    "name": "getLNode"
   },
   {
     "name": "getLViewChild"
@@ -1647,7 +1725,7 @@
     "name": "getNamedFormat"
   },
   {
-    "name": "getNextLNode"
+    "name": "getNgModuleDef"
   },
   {
     "name": "getNgZone"
@@ -1657,18 +1735,6 @@
   },
   {
     "name": "getNumberOfCurrencyDigits"
-  },
-  {
-    "name": "getOrCreateChangeDetectorRef"
-  },
-  {
-    "name": "getOrCreateContainerRef"
-  },
-  {
-    "name": "getOrCreateElementRef"
-  },
-  {
-    "name": "getOrCreateHostChangeDetector"
   },
   {
     "name": "getOrCreateInjectable"
@@ -1686,16 +1752,22 @@
     "name": "getOrCreateTView"
   },
   {
-    "name": "getOrCreateTemplateRef"
+    "name": "getOriginalError"
   },
   {
-    "name": "getOriginalError"
+    "name": "getParentInjectorLocation"
+  },
+  {
+    "name": "getParentInjectorView"
   },
   {
     "name": "getParentLNode"
   },
   {
     "name": "getParentState"
+  },
+  {
+    "name": "getPipeDef"
   },
   {
     "name": "getPlatform"
@@ -1711,6 +1783,9 @@
   },
   {
     "name": "getPreviousOrParentNode"
+  },
+  {
+    "name": "getPreviousOrParentTNode"
   },
   {
     "name": "getPromiseCtor"
@@ -1731,9 +1806,6 @@
     "name": "getRendererFactory"
   },
   {
-    "name": "getRootView"
-  },
-  {
     "name": "getStyleSanitizer"
   },
   {
@@ -1744,6 +1816,9 @@
   },
   {
     "name": "getSymbolIterator$1"
+  },
+  {
+    "name": "getTNode"
   },
   {
     "name": "getTViewCleanup"
@@ -1788,9 +1863,6 @@
     "name": "identity"
   },
   {
-    "name": "initChangeDetectorIfExisting"
-  },
-  {
     "name": "initDomAdapter"
   },
   {
@@ -1819,6 +1891,9 @@
   },
   {
     "name": "injectableDefRecord"
+  },
+  {
+    "name": "injectorHasToken"
   },
   {
     "name": "insertView"
@@ -1887,6 +1962,9 @@
     "name": "isFunction"
   },
   {
+    "name": "isInteropObservable"
+  },
+  {
     "name": "isIterable"
   },
   {
@@ -1903,9 +1981,6 @@
   },
   {
     "name": "isObject"
-  },
-  {
-    "name": "isObservable"
   },
   {
     "name": "isObservable$1"
@@ -1930,9 +2005,6 @@
   },
   {
     "name": "isTemplateElement"
-  },
-  {
-    "name": "isTrustedSubscriber"
   },
   {
     "name": "isTypeProvider"
@@ -2130,6 +2202,12 @@
     "name": "readElementValue"
   },
   {
+    "name": "readPatchedData"
+  },
+  {
+    "name": "readPatchedLViewData"
+  },
+  {
     "name": "recursivelyProcessProviders"
   },
   {
@@ -2214,6 +2292,9 @@
     "name": "scheduleTick"
   },
   {
+    "name": "searchDirectivesOnInjector"
+  },
+  {
     "name": "searchMatchesQueuedForCreation"
   },
   {
@@ -2227,6 +2308,9 @@
   },
   {
     "name": "setDirty"
+  },
+  {
+    "name": "setEnvironment"
   },
   {
     "name": "setFlag"
@@ -2254,6 +2338,9 @@
   },
   {
     "name": "setUpAttributes"
+  },
+  {
+    "name": "setUpBloom"
   },
   {
     "name": "setValue"
@@ -2317,6 +2404,9 @@
   },
   {
     "name": "symbolNames"
+  },
+  {
+    "name": "syncViewWithBlueprint"
   },
   {
     "name": "tagSet"
@@ -2394,7 +2484,7 @@
     "name": "viewAttached"
   },
   {
-    "name": "walkLNodeTree"
+    "name": "walkTNodeTree"
   },
   {
     "name": "walkUpViews"
@@ -2403,10 +2493,7 @@
     "name": "weekGetter"
   },
   {
-    "name": "wrapListenerWithDirtyAndDefault"
-  },
-  {
-    "name": "wrapListenerWithDirtyLogic"
+    "name": "wrapListenerWithPreventDefault"
   },
   {
     "name": "wtfCreateScope"

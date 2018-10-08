@@ -13,9 +13,9 @@ import {componentNeedsResolution, maybeQueueResolutionOfComponentResources} from
 import {ViewEncapsulation} from '../../metadata/view';
 import {Type} from '../../type';
 import {stringify} from '../../util';
+import {NG_COMPONENT_DEF, NG_DIRECTIVE_DEF} from '../fields';
 
 import {angularCoreEnv} from './environment';
-import {NG_COMPONENT_DEF, NG_DIRECTIVE_DEF} from './fields';
 import {patchComponentDefWithScope, transitiveScopesFor} from './module';
 import {getReflect, reflectDependencies} from './util';
 
@@ -76,7 +76,8 @@ export function compileComponent(type: Type<any>, metadata: Component): void {
               viewQueries: [],
               wrapDirectivesInClosure: false,
               styles: metadata.styles || [],
-              encapsulation: metadata.encapsulation || ViewEncapsulation.Emulated
+              encapsulation: metadata.encapsulation || ViewEncapsulation.Emulated,
+              animations: metadata.animations || null
             },
             constantPool, makeBindingParser());
         const preStatements = [...constantPool.statements, ...res.statements];

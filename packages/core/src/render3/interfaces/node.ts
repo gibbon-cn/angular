@@ -6,12 +6,9 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {StylingContext} from '../styling';
-
 import {LContainer} from './container';
-import {LInjector} from './injector';
-import {LQueries} from './query';
 import {RComment, RElement, RText} from './renderer';
+import {StylingContext} from './styling';
 import {LViewData, TView} from './view';
 
 
@@ -80,23 +77,6 @@ export interface LNode {
    * If LContainerNode, then `data` contains LContainer.
    */
   readonly data: LViewData|LContainer|null;
-
-
-  /**
-   * Each node belongs to a view.
-   *
-   * When the injector is walking up a tree, it needs access to the `directives` (part of view).
-   */
-  readonly view: LViewData;
-
-  /** The injector associated with this node. Necessary for DI. */
-  nodeInjector: LInjector|null;
-
-  /**
-   * Pointer to the corresponding TNode object, which stores static
-   * data about this node.
-   */
-  tNode: TNode;
 
   /**
    * A pointer to an LContainerNode created by directives requesting ViewContainerRef
@@ -209,6 +189,21 @@ export interface TNode {
    * If index is -1, this is a dynamically created container node or embedded view node.
    */
   index: number;
+
+  /**
+   * The index of the closest injector in this node's LViewData.
+   *
+   * If the index === -1, there is no injector on this node or any ancestor node in this view.
+   *
+   * If the index !== -1, it is the index of this node's injector OR the index of a parent injector
+   * in the same view. We pass the parent injector index down the node tree of a view so it's
+   * possible to find the parent injector without walking a potentially deep node tree. Injector
+   * indices are not set across view boundaries because there could be multiple component hosts.
+   *
+   * If tNode.injectorIndex === tNode.parent.injectorIndex, then the index belongs to a parent
+   * injector.
+   */
+  injectorIndex: number;
 
   /**
    * This number stores two values using its bits:
@@ -385,13 +380,13 @@ export interface TNode {
 export interface TElementNode extends TNode {
   /** Index in the data[] array */
   index: number;
-  child: TElementNode|TTextNode|TContainerNode|TProjectionNode|null;
+  child: TElementNode|TTextNode|TElementContainerNode|TContainerNode|TProjectionNode|null;
   /**
    * Element nodes will have parents unless they are the first node of a component or
    * embedded view (which means their parent is in a different view and must be
-   * retrieved using LView.node).
+   * retrieved using viewData[HOST_NODE]).
    */
-  parent: TElementNode|null;
+  parent: TElementNode|TElementContainerNode|null;
   tViews: null;
 
   /**
@@ -412,7 +407,7 @@ export interface TTextNode extends TNode {
    * embedded view (which means their parent is in a different view and must be
    * retrieved using LView.node).
    */
-  parent: TElementNode|null;
+  parent: TElementNode|TElementContainerNode|null;
   tViews: null;
   projection: null;
 }
@@ -434,8 +429,19 @@ export interface TContainerNode extends TNode {
    * - They are the first node of a component or embedded view
    * - They are dynamically created
    */
-  parent: TElementNode|null;
+  parent: TElementNode|TElementContainerNode|null;
   tViews: TView|TView[]|null;
+  projection: null;
+}
+
+
+/** Static data for an LElementContainerNode */
+export interface TElementContainerNode extends TNode {
+  /** Index in the LViewData[] array. */
+  index: number;
+  child: TElementNode|TTextNode|TContainerNode|TElementContainerNode|TProjectionNode|null;
+  parent: TElementNode|TElementContainerNode|null;
+  tViews: null;
   projection: null;
 }
 
@@ -443,7 +449,7 @@ export interface TContainerNode extends TNode {
 export interface TViewNode extends TNode {
   /** If -1, it's a dynamically created view. Otherwise, it is the view block ID. */
   index: number;
-  child: TElementNode|TTextNode|TContainerNode|TProjectionNode|null;
+  child: TElementNode|TTextNode|TElementContainerNode|TContainerNode|TProjectionNode|null;
   parent: TContainerNode|null;
   tViews: null;
   projection: null;
@@ -458,7 +464,7 @@ export interface TProjectionNode extends TNode {
    * or embedded view (which means their parent is in a different view and must be
    * retrieved using LView.node).
    */
-  parent: TElementNode|null;
+  parent: TElementNode|TElementContainerNode|null;
   tViews: null;
 
   /** Index of the projection node. (See TNode.projection for more info.) */
@@ -526,9 +532,9 @@ export type InitialInputs = string[];
 export const unusedValueExportToPlacateAjd = 1;
 
 /**
- * Type representing a set of LNodes that can have local refs (`#foo`) placed on them.
+ * Type representing a set of TNodes that can have local refs (`#foo`) placed on them.
  */
-export type LNodeWithLocalRefs = LContainerNode | LElementNode | LElementContainerNode;
+export type TNodeWithLocalRefs = TContainerNode | TElementNode | TElementContainerNode;
 
 /**
  * Type for a function that extracts a value for a local refs.
@@ -536,4 +542,4 @@ export type LNodeWithLocalRefs = LContainerNode | LElementNode | LElementContain
  * - `<div #nativeDivEl>` - `nativeDivEl` should point to the native `<div>` element;
  * - `<ng-template #tplRef>` - `tplRef` should point to the `TemplateRef` instance;
  */
-export type LocalRefExtractor = (lNode: LNodeWithLocalRefs) => any;
+export type LocalRefExtractor = (tNode: TNodeWithLocalRefs, currentView: LViewData) => any;

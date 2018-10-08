@@ -13,13 +13,18 @@ import {Injector} from '../di/injector';
 import {Sanitizer} from '../sanitization/security';
 
 import {assertComponentType, assertDefined} from './assert';
+import {getLElementFromComponent, readPatchedLViewData} from './context_discovery';
+import {getComponentDef} from './definition';
 import {queueInitHooks, queueLifecycleHooks} from './hooks';
-import {CLEAN_PROMISE, _getComponentHostLElementNode, baseDirectiveCreate, createLViewData, createTView, detectChangesInternal, enterView, executeInitAndContentHooks, getRootView, hostElement, initChangeDetectorIfExisting, leaveView, locateHostElement, setHostBindings, queueHostBindingForCheck,} from './instructions';
-import {ComponentDef, ComponentDefInternal, ComponentType} from './interfaces/definition';
+import {PlayerHandler} from './interfaces/player';
+
+import {CLEAN_PROMISE, baseDirectiveCreate, createLViewData, createTView, detectChangesInternal, enterView, executeInitAndContentHooks, hostElement, leaveView, locateHostElement, setHostBindings, queueHostBindingForCheck,} from './instructions';
+import {ComponentDef, ComponentType} from './interfaces/definition';
 import {LElementNode} from './interfaces/node';
 import {RElement, RendererFactory3, domRendererFactory3} from './interfaces/renderer';
-import {LViewData, LViewFlags, RootContext, BINDING_INDEX, INJECTOR, CONTEXT, TVIEW} from './interfaces/view';
-import {stringify} from './util';
+import {CONTEXT, INJECTOR, LViewData, LViewFlags, RootContext, RootContextFlags, TVIEW} from './interfaces/view';
+import {getRootView, stringify} from './util';
+
 
 
 /** Options that control how the component should be bootstrapped. */
@@ -29,6 +34,9 @@ export interface CreateComponentOptions {
 
   /** A custom sanitizer instance */
   sanitizer?: Sanitizer;
+
+  /** A custom animation player handler */
+  playerHandler?: PlayerHandler;
 
   /**
    * Host element on which the component will be bootstrapped. If not specified,
@@ -52,7 +60,7 @@ export interface CreateComponentOptions {
    * features list because there's no way of knowing when the component will be used as
    * a root component.
    */
-  hostFeatures?: (<T>(component: T, componentDef: ComponentDef<T, string>) => void)[];
+  hostFeatures?: HostFeature[];
 
   /**
    * A function which is used to schedule change detection work in the future.
@@ -67,6 +75,9 @@ export interface CreateComponentOptions {
    */
   scheduler?: (work: () => void) => void;
 }
+
+/** See CreateComponentOptions.hostFeatures */
+type HostFeature = (<T>(component: T, componentDef: ComponentDef<T>) => void);
 
 // TODO: A hack to not pull in the NullInjector from @angular/core.
 export const NULL_INJECTOR: Injector = {
@@ -96,22 +107,23 @@ export function renderComponent<T>(
   ngDevMode && assertComponentType(componentType);
   const rendererFactory = opts.rendererFactory || domRendererFactory3;
   const sanitizer = opts.sanitizer || null;
-  const componentDef =
-      (componentType as ComponentType<T>).ngComponentDef as ComponentDefInternal<T>;
+  const componentDef = getComponentDef<T>(componentType) !;
   if (componentDef.type != componentType) componentDef.type = componentType;
 
   // The first index of the first selector is the tag name.
   const componentTag = componentDef.selectors ![0] ![0] as string;
   const hostNode = locateHostElement(rendererFactory, opts.host || componentTag);
-  const rootContext = createRootContext(opts.scheduler || requestAnimationFrame.bind(window));
+  const rootFlags = componentDef.onPush ? LViewFlags.Dirty | LViewFlags.IsRoot :
+                                          LViewFlags.CheckAlways | LViewFlags.IsRoot;
+  const rootContext = createRootContext(
+      opts.scheduler || requestAnimationFrame.bind(window), opts.playerHandler || null);
 
   const rootView: LViewData = createLViewData(
       rendererFactory.createRenderer(hostNode, componentDef),
-      createTView(-1, null, 1, 0, null, null, null), rootContext,
-      componentDef.onPush ? LViewFlags.Dirty : LViewFlags.CheckAlways);
+      createTView(-1, null, 1, 0, null, null, null), rootContext, rootFlags);
   rootView[INJECTOR] = opts.injector || null;
 
-  const oldView = enterView(rootView, null !);
+  const oldView = enterView(rootView, null);
   let elementNode: LElementNode;
   let component: T;
   try {
@@ -119,21 +131,11 @@ export function renderComponent<T>(
 
     // Create element node at index 0 in data array
     elementNode = hostElement(componentTag, hostNode, componentDef, sanitizer);
-
-    // Create directive instance with factory() and store at index 0 in directives array
-    component = baseDirectiveCreate(0, componentDef.factory() as T, componentDef);
-    if (componentDef.hostBindings) {
-      queueHostBindingForCheck(0, componentDef.hostVars);
-    }
-    rootContext.components.push(component);
-    (elementNode.data as LViewData)[CONTEXT] = component;
-    initChangeDetectorIfExisting(elementNode.nodeInjector, component, elementNode.data !);
-
-    opts.hostFeatures && opts.hostFeatures.forEach((feature) => feature(component, componentDef));
+    component = createRootComponent(
+        elementNode, componentDef, rootView, rootContext, opts.hostFeatures || null);
 
     executeInitAndContentHooks();
-    setHostBindings(rootView[TVIEW].hostBindings);
-    detectChangesInternal(elementNode.data as LViewData, elementNode, component);
+    detectChangesInternal(elementNode.data as LViewData, component);
   } finally {
     leaveView(oldView);
     if (rendererFactory.end) rendererFactory.end();
@@ -142,11 +144,34 @@ export function renderComponent<T>(
   return component;
 }
 
-export function createRootContext(scheduler: (workFn: () => void) => void): RootContext {
+/**
+ * Creates a root component and sets it up with features and host bindings. Shared by
+ * renderComponent() and ViewContainerRef.createComponent().
+ */
+export function createRootComponent<T>(
+    elementNode: LElementNode, componentDef: ComponentDef<T>, rootView: LViewData,
+    rootContext: RootContext, hostFeatures: HostFeature[] | null): any {
+  // Create directive instance with factory() and store at index 0 in directives array
+  const component = baseDirectiveCreate(0, componentDef.factory() as T, componentDef, elementNode);
+
+  if (componentDef.hostBindings) queueHostBindingForCheck(0, componentDef.hostVars);
+  rootContext.components.push(component);
+  (elementNode.data as LViewData)[CONTEXT] = component;
+
+  hostFeatures && hostFeatures.forEach((feature) => feature(component, componentDef));
+  setHostBindings(rootView[TVIEW].hostBindings);
+  return component;
+}
+
+
+export function createRootContext(
+    scheduler: (workFn: () => void) => void, playerHandler?: PlayerHandler|null): RootContext {
   return {
     components: [],
     scheduler: scheduler,
     clean: CLEAN_PROMISE,
+    playerHandler: playerHandler || null,
+    flags: RootContextFlags.Empty
   };
 }
 
@@ -163,13 +188,13 @@ export function createRootContext(scheduler: (workFn: () => void) => void): Root
  * renderComponent(AppComponent, {features: [RootLifecycleHooks]});
  * ```
  */
-export function LifecycleHooksFeature(component: any, def: ComponentDefInternal<any>): void {
-  const elementNode = _getComponentHostLElementNode(component);
+export function LifecycleHooksFeature(component: any, def: ComponentDef<any>): void {
+  const rootTView = readPatchedLViewData(component) ![TVIEW];
 
   // Root component is always created at dir index 0
-  const tView = elementNode.view[TVIEW];
-  queueInitHooks(0, def.onInit, def.doCheck, tView);
-  queueLifecycleHooks(elementNode.tNode.flags, tView);
+  queueInitHooks(0, def.onInit, def.doCheck, rootTView);
+  // Directive starting index 0, directive count 1 -> directive flags: 1
+  queueLifecycleHooks(1, rootTView);
 }
 
 /**
@@ -193,7 +218,7 @@ function getRootContext(component: any): RootContext {
  * @param component Component for which the host element should be retrieved.
  */
 export function getHostElement<T>(component: T): HTMLElement {
-  return _getComponentHostLElementNode(component).native as any;
+  return getLElementFromComponent(component).native as any;
 }
 
 /**

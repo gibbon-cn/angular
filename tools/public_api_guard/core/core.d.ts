@@ -26,7 +26,7 @@ export declare const APP_ID: InjectionToken<string>;
 export declare const APP_INITIALIZER: InjectionToken<(() => void)[]>;
 
 export declare class ApplicationInitStatus {
-    readonly done: boolean;
+    readonly done = false;
     readonly donePromise: Promise<any>;
     constructor(appInits: (() => any)[]);
 }
@@ -506,7 +506,7 @@ export declare class ModuleWithComponentFactories<T> {
     constructor(ngModuleFactory: NgModuleFactory<T>, componentFactories: ComponentFactory<any>[]);
 }
 
-export interface ModuleWithProviders<T = any> {
+export interface ModuleWithProviders<T = any /** TODO(alxhub): remove default when callers pass explicit type param */> {
     ngModule: Type<T>;
     providers?: Provider[];
 }
@@ -624,7 +624,7 @@ export declare abstract class Query {
 
 export declare class QueryList<T> {
     readonly changes: Observable<any>;
-    readonly dirty: boolean;
+    readonly dirty = true;
     readonly first: T;
     readonly last: T;
     readonly length: number;

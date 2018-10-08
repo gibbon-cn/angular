@@ -89,6 +89,189 @@ The root file names (`app.component`) are the same for both files.
 
 Adopt these two conventions in your own projects for _every kind_ of test file.
 
+{@a ci}
+
+## Set up continuous integration
+
+One of the best ways to keep your project bug free is through a test suite, but it's easy to forget to run tests all the time. 
+Continuous integration (CI) servers let you set up your project repository so that your tests run on every commit and pull request.
+
+There are paid CI services like Circle CI and Travis CI, and you can also host your own for free using Jenkins and others. 
+Although Circle CI and Travis CI are paid services, they are provided free for open source projects. 
+You can create a public project on GitHub and add these services without paying. 
+Contributions to the Angular repo are automatically run through a whole suite of Circle CI and Travis CI tests.
+
+This article explains how to configure your project to run Circle CI and Travis CI, and also update your test configuration to be able to run tests in the Chrome browser in either environment.
+
+
+### Configure project for Circle CI
+
+Step 1: Create a folder called `.circleci` at the project root.
+
+Step 2: In the new folder, create a file called `config.yml` with the following content:
+
+```
+version: 2
+jobs:
+  build:
+    working_directory: ~/my-project
+    docker:
+      - image: circleci/node:8-browsers
+    steps:
+      - checkout
+      - restore_cache:
+          key: my-project-{{ .Branch }}-{{ checksum "package.json" }}
+      - run: npm install
+      - save_cache:
+          key: my-project-{{ .Branch }}-{{ checksum "package.json" }}
+          paths:
+            - "node_modules"
+      - run: xvfb-run -a npm run test -- --single-run --no-progress --browser=ChromeNoSandbox
+      - run: xvfb-run -a npm run e2e -- --no-progress --config=protractor-ci.conf.js
+```
+
+This configuration caches `node_modules/` and uses [`npm run`](https://docs.npmjs.com/cli/run-script) to run CLI commands, because `@angular/cli` is not installed globally. 
+The double dash (`--`) is needed to pass arguments into the `npm` script.
+
+For Chrome, it uses `xvfb-run` to run the `npm run` command using a virtual screen.
+
+Step 3: Commit your changes and push them to your repository.
+
+Step 4: [Sign up for Circle CI](https://circleci.com/docs/2.0/first-steps/) and [add your project](https://circleci.com/add-projects). 
+Your project should start building.
+
+* Learn more about Circle CI from [Circle CI documentation](https://circleci.com/docs/2.0/).
+
+### Configure project for Travis CI
+
+Step 1: Create a file called `.travis.yml` at the project root, with the following content:
+
+```
+dist: trusty
+sudo: false
+
+language: node_js
+node_js:
+  - "8"
+  
+addons:
+  apt:
+    sources:
+      - google-chrome
+    packages:
+      - google-chrome-stable
+
+cache:
+  directories:
+     - ./node_modules
+
+install:
+  - npm install
+
+script:
+  # Use Chromium instead of Chrome.
+  - export CHROME_BIN=chromium-browser
+  - xvfb-run -a npm run test -- --single-run --no-progress --browser=ChromeNoSandbox
+  - xvfb-run -a npm run e2e -- --no-progress --config=protractor-ci.conf.js
+```
+
+This does the same things as the Circle CI configuration, except that Travis doesn't come with Chrome, so we use Chromium instead.
+
+Step 2: Commit your changes and push them to your repository.
+
+Step 3: [Sign up for Travis CI](https://travis-ci.org/auth) and [add your project](https://travis-ci.org/profile). 
+You'll need to push a new commit to trigger a build.
+
+* Learn more about Travis CI testing from [Travis CI documentation](https://docs.travis-ci.com/).
+
+### Configure CLI for CI testing in Chrome
+
+When the CLI commands `ng test` and `ng e2e` are generally running the CI tests in your environment, you might still need to adjust your configuration to run the Chrome browser tests.
+
+There are configuration files for both the [Karma JavaScript test runner](http://karma-runner.github.io/2.0/config/configuration-file.html) 
+and [Protractor](https://www.protractortest.org/#/api-overview) end-to-end testing tool, 
+which  you must adjust to start Chrome without sandboxing.
+
+* In the Karma configuration file, `karma.conf.js`, add a custom launcher called ChromeNoSandbox below browsers:
+```
+browsers: ['Chrome'],
+customLaunchers: {
+  ChromeNoSandbox: {
+    base: 'Chrome',
+    flags: ['--no-sandbox']
+  }
+},
+```
+
+* Create a new file, `protractor-ci.conf.js`, in the root folder of your project, which extends the original `protractor.conf.js`:
+```
+const config = require('./protractor.conf').config;
+
+config.capabilities = {
+  browserName: 'chrome',
+  chromeOptions: {
+    args: ['--no-sandbox']
+  }
+};
+
+exports.config = config;
+```
+
+Now you can run the following commands to use the `--no-sandbox` flag:
+
+```
+ng test --single-run --no-progress --browser=ChromeNoSandbox
+ng e2e --no-progress --config=protractor-ci.conf.js
+```
+
+{@a code-coverage}
+
+## Enable code coverage reports
+
+The CLI can run unit tests and create code coverage reports. 
+Code coverage reports show you  any parts of our code base that may not be properly tested by your unit tests.
+
+To generate a coverage report run the following command in the root of your project.
+
+```
+ng test --watch=false --code-coverage
+```
+
+When  the tests are complete, the command creates a new `/coverage` folder in the project. Open the `index.html` file to see a report with your source code and code coverage values.
+
+If you want to create code-coverage reports every time you test, you can set the following option in the CLI configuration file, `angular.json`:
+
+```
+  "test": {
+    "options": {
+      "codeCoverage": true
+    }
+  }
+```
+
+### Code coverage enforcement
+
+The code coverage percentages let you estimate how much of your code is tested.  
+If your team decides on a set minimum amount to be unit tested, you can enforce this minimum with the Angular CLI. 
+
+For example, suppose you want the code base to have a minimum of 80% code coverage. 
+To enable this, open the [Karma](http://karma-runner.github.io/0.13/index.html) test platform configuration file, `karma.conf.js`, and add the following in the `coverageIstanbulReporter:` key.
+
+```
+coverageIstanbulReporter: {
+  reports: [ 'html', 'lcovonly' ],
+  fixWebpackSourcePaths: true,
+  thresholds: {
+    statements: 80,
+    lines: 80,
+    branches: 80,
+    functions: 80
+  }
+}
+```
+
+The `thresholds` property causes the tool to enforce a minimum of 80% code coverage when the unit tests are run in the project.
+
 ## Service Tests
 
 Services are often the easiest files to unit test.
@@ -1054,6 +1237,8 @@ value becomes available. The test must become _asynchronous_.
 
 #### Async test with _fakeAsync()_
 
+To use `fakeAsync()` functionality, you need to import `zone-testing`, for details, please read [setup guide](guide/setup#appendix-test-using-fakeasyncasync).
+
 The following test confirms the expected behavior when the service returns an `ErrorObservable`.
 
 <code-example
@@ -1067,7 +1252,7 @@ Note that the `it()` function receives an argument of the following form.
 fakeAsync(() => { /* test body */ })`
 ```
 
-The `fakeAsync` function enables a linear coding style by running the test body in a special _fakeAsync test zone_.
+The `fakeAsync()` function enables a linear coding style by running the test body in a special `fakeAsync test zone`.
 The test body appears to be synchronous.
 There is no nested syntax (like a `Promise.then()`) to disrupt the flow of control.
 
@@ -1080,12 +1265,55 @@ You do have to call `tick()` to advance the (virtual) clock.
 Calling `tick()` simulates the passage of time until all pending asynchronous activities finish.
 In this case, it waits for the error handler's `setTimeout()`;
 
-The `tick` function is one of the Angular testing utilities that you import with `TestBed`.
-It's a companion to `fakeAsync` and you can only call it within a `fakeAsync` body.
+The `tick()` function accepts milliseconds as parameter (defaults to 0 if not provided). The parameter represents how much the virtual clock advances. For example, if you have a `setTimeout(fn, 100)` in a `fakeAsync()` test, you need to use tick(100) to trigger the fn callback.
+
+<code-example
+  path="testing/src/app/demo/async-helper.spec.ts"
+  region="fake-async-test-tick">
+</code-example>
+
+The `tick()` function is one of the Angular testing utilities that you import with `TestBed`.
+It's a companion to `fakeAsync()` and you can only call it within a `fakeAsync()` body.
+
+#### Comparing dates inside fakeAsync()
+
+`fakeAsync()` simulates passage of time, which allows you to calculate the difference between dates inside `fakeAsync()`.
+
+<code-example
+  path="testing/src/app/demo/async-helper.spec.ts"
+  region="fake-async-test-date">
+</code-example>
+
+#### jasmine.clock with fakeAsync()
+
+Jasmine also provides a `clock` feature to mock dates. Angular automatically runs tests that are run after
+`jasmine.clock().install()` is called inside a `fakeAsync()` method until `jasmine.clock().uninstall()` is called. `fakeAsync()` is not needed and throws an error if nested.
+
+By default, this feature is disabled. To enable it, set a global flag before import `zone-testing`.
+
+If you use the Angular CLI, configure this flag in `src/test.ts`.
+
+```
+(window as any)['__zone_symbol__fakeAsyncPatchLock'] = true;
+import 'zone.js/dist/zone-testing';
+```
+
+<code-example
+  path="testing/src/app/demo/async-helper.spec.ts"
+  region="fake-async-test-clock">
+</code-example>
+
+#### Using the RxJS scheduler inside fakeAsync()
+
+You can also use RxJS scheduler in `fakeAsync()` just like using `setTimeout()` or `setInterval()`, but you need to import `zone.js/dist/zone-patch-rxjs-fake-async` to patch RxJS scheduler.
+<code-example
+  path="testing/src/app/demo/async-helper.spec.ts"
+  region="fake-async-test-rxjs">
+</code-example>
 
 #### Support more macroTasks
 
-By default `fakeAsync` supports the following `macroTasks`.
+By default `fakeAsync()` supports the following `macroTasks`.
 
 - setTimeout
 - setInterval
@@ -1106,7 +1334,7 @@ If you run other `macroTask` such as `HTMLCanvasElement.toBlob()`, `Unknown macr
   </code-pane>
 </code-tabs>
 
-If you want to support such case, you need to define the `macroTask` you want to support in `beforeEach`.
+If you want to support such case, you need to define the `macroTask` you want to support in `beforeEach()`.
 For example:
 
 ```javascript
@@ -1203,6 +1431,8 @@ Then you can assert that the quote element displays the expected text.
 
 #### Async test with _async()_
 
+To use `async()` functionality, you need to import `zone-testing`, for details, please read [setup guide](guide/setup#appendix-test-using-fakeasyncasync).
+
 The `fakeAsync()` utility function has a few limitations.
 In particular, it won't work if the test body makes an `XHR` call.
 
@@ -1226,11 +1456,12 @@ Here's the previous `fakeAsync()` test, re-written with the `async()` utility.
 
 The `async()` utility hides some asynchronous boilerplate by arranging for the tester's code
 to run in a special _async test zone_.
-You don't have to pass Jasmine's `done()` into the test and call `done()`
-in promise or observable callbacks.
+You don't need to pass Jasmine's `done()` into the test and call `done()` because it is `undefined` in promise or observable callbacks.
 
 But the test's asynchronous nature is revealed by the call to `fixture.whenStable()`,
 which breaks the linear flow of control.
+
+When using an `intervalTimer()` such as `setInterval()` in `async()`, remember to cancel the timer with `clearInterval()` after the test, otherwise the `async()` never ends.
 
 {@a when-stable}
 
@@ -1250,18 +1481,19 @@ update the quote element with the expected text.
 
 #### Jasmine _done()_
 
-While the `async` and `fakeAsync` functions greatly
+While the `async()` and `fakeAsync()` functions greatly
 simplify Angular asynchronous testing,
 you can still fall back to the traditional technique
 and pass `it` a function that takes a
 [`done` callback](http://jasmine.github.io/2.0/introduction.html#section-Asynchronous_Support).
 
+You can't call `done()` in `async()` or `fakeAsync()` functions, because the `done parameter`
+is `undefined`.
+
 Now you are responsible for chaining promises, handling errors, and calling `done()` at the appropriate moments.
 
-Writing test functions with `done()`, is more cumbersome than `async`and `fakeAsync`.
-But it is occasionally necessary.
-For example, you can't call `async` or `fakeAsync` when testing
-code that involves the `intervalTimer()` or the RxJS `delay()` operator.
+Writing test functions with `done()`, is more cumbersome than `async()`and `fakeAsync()`.
+But it is occasionally necessary when code involves the `intervalTimer()` like `setInterval`.
 
 Here are two more versions of the previous test, written with `done()`.
 The first one subscribes to the `Observable` exposed to the template by the component's `quote` property.
@@ -2124,7 +2356,6 @@ Here are a few more `HeroDetailComponent` tests to reinforce the point.
 
 {@a compile-components}
 ### Calling _compileComponents()_
-
 <div class="alert is-helpful">
 
 You can ignore this section if you _only_ run tests with the CLI `ng test` command
@@ -2688,7 +2919,7 @@ Here's a summary of the stand-alone functions, in order of likely utility:
 
     <td>
 
-      When a `fakeAsync` test ends with pending timer event _tasks_ (queued `setTimeOut` and `setInterval` callbacks),
+      When a `fakeAsync()` test ends with pending timer event _tasks_ (queued `setTimeOut` and `setInterval` callbacks),
       the test fails with a clear error message.
 
       In general, a test should end with no queued tasks.
@@ -2705,7 +2936,7 @@ Here's a summary of the stand-alone functions, in order of likely utility:
 
     <td>
 
-      When a `fakeAsync` test ends with pending _micro-tasks_ such as unresolved promises,
+      When a `fakeAsync()` test ends with pending _micro-tasks_ such as unresolved promises,
       the test fails with a clear error message.
 
       In general, a test should wait for micro-tasks to finish.

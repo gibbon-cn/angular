@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {Component, Directive, Injector, NgModule, Pipe, PlatformRef, Provider, RendererFactory2, SchemaMetadata, Type, ɵNgModuleDefInternal as NgModuleDefInternal, ɵNgModuleTransitiveScopes as NgModuleTransitiveScopes, ɵRender3ComponentFactory as ComponentFactory, ɵRender3DebugRendererFactory2 as Render3DebugRendererFactory2, ɵRender3NgModuleRef as NgModuleRef, ɵWRAP_RENDERER_FACTORY2 as WRAP_RENDERER_FACTORY2, ɵcompileComponent as compileComponent, ɵcompileDirective as compileDirective, ɵcompileNgModuleDefs as compileNgModuleDefs, ɵcompilePipe as compilePipe, ɵpatchComponentDefWithScope as patchComponentDefWithScope, ɵstringify as stringify} from '@angular/core';
+import {Component, Directive, Injector, NgModule, Pipe, PlatformRef, Provider, RendererFactory2, SchemaMetadata, Type, ɵInjectableDef as InjectableDef, ɵNgModuleDef as NgModuleDef, ɵNgModuleTransitiveScopes as NgModuleTransitiveScopes, ɵRender3ComponentFactory as ComponentFactory, ɵRender3DebugRendererFactory2 as Render3DebugRendererFactory2, ɵRender3NgModuleRef as NgModuleRef, ɵWRAP_RENDERER_FACTORY2 as WRAP_RENDERER_FACTORY2, ɵcompileComponent as compileComponent, ɵcompileDirective as compileDirective, ɵcompileNgModuleDefs as compileNgModuleDefs, ɵcompilePipe as compilePipe, ɵgetInjectableDef as getInjectableDef, ɵpatchComponentDefWithScope as patchComponentDefWithScope, ɵstringify as stringify} from '@angular/core';
 
 import {ComponentFixture} from './component_fixture';
 import {MetadataOverride} from './metadata_override';
@@ -314,9 +314,10 @@ export class TestBedRender3 implements Injector, TestBed {
    */
   overrideProvider(token: any, provider: {useFactory?: Function, useValue?: any, deps?: any[]}):
       void {
+    let injectableDef: InjectableDef<any>|null;
     const isRoot =
-        (typeof token !== 'string' && token.ngInjectableDef &&
-         token.ngInjectableDef.providedIn === 'root');
+        (typeof token !== 'string' && (injectableDef = getInjectableDef(token)) &&
+         injectableDef.providedIn === 'root');
     const overrides = isRoot ? this._rootProviderOverrides : this._providerOverrides;
 
     if (provider.useFactory) {
@@ -556,7 +557,7 @@ function transitiveScopesFor<T>(
       // Components, Directives, NgModules, and Pipes can all be exported.
       ngComponentDef?: any;
       ngDirectiveDef?: any;
-      ngModuleDef?: NgModuleDefInternal<E>;
+      ngModuleDef?: NgModuleDef<E>;
       ngPipeDef?: any;
     };
 
@@ -597,6 +598,6 @@ function flatten<T>(values: any[]): T[] {
   return out;
 }
 
-function isNgModule<T>(value: Type<T>): value is Type<T>&{ngModuleDef: NgModuleDefInternal<T>} {
-  return (value as{ngModuleDef?: NgModuleDefInternal<T>}).ngModuleDef !== undefined;
+function isNgModule<T>(value: Type<T>): value is Type<T>&{ngModuleDef: NgModuleDef<T>} {
+  return (value as{ngModuleDef?: NgModuleDef<T>}).ngModuleDef !== undefined;
 }

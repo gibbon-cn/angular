@@ -13,38 +13,100 @@ import {AbstractControl} from '../model';
 import {NG_VALIDATORS, Validators} from '../validators';
 
 
-/** @experimental */
+/**
+ * @description
+ * Defines the map of errors returned from failed validation checks
+ *
+ * @experimental
+ */
 export type ValidationErrors = {
   [key: string]: any
 };
 
 /**
- * An interface that can be implemented by classes that can act as validators.
+ * @description
+ * An interface implemented by classes that perform synchronous validation.
  *
- * ## Usage
+ * @usageNotes
+ *
+ * ### Provide a custom validator
+ *
+ * The following example implements the `Validator` interface to create a
+ * validator directive with a custom error key.
  *
  * ```typescript
  * @Directive({
- *   selector: '[custom-validator]',
+ *   selector: '[customValidator]',
  *   providers: [{provide: NG_VALIDATORS, useExisting: CustomValidatorDirective, multi: true}]
  * })
  * class CustomValidatorDirective implements Validator {
- *   validate(c: Control): {[key: string]: any} {
- *     return {"custom": true};
+ *   validate(control: AbstractControl): ValidationErrors|null {
+ *     return {'custom': true};
+ *   }
+ * }
+ * ```
+ */
+export interface Validator {
+  /**
+   * @description
+   * Method that performs synchronous validation against the provided control.
+   *
+   * @param c The control to validate against.
+   *
+   * @returns A map of validation errors if validation fails,
+   * otherwise null.
+   */
+  validate(control: AbstractControl): ValidationErrors|null;
+
+  /**
+   * @description
+   * Registers a callback function to call when the validator inputs change.
+   *
+   * @param fn The callback function
+   */
+  registerOnValidatorChange?(fn: () => void): void;
+}
+
+/**
+ * @description
+ * An interface implemented by classes that perform asynchronous validation.
+ *
+ * @usageNotes
+ *
+ * ### Provide a custom async validator directive
+ *
+ * The following example implements the `AsyncValidator` interface to create an
+ * async validator directive with a custom error key.
+ *
+ * ```typescript
+ * import { of as observableOf } from 'rxjs';
+ *
+ * @Directive({
+ *   selector: '[customAsyncValidator]',
+ *   providers: [{provide: NG_ASYNC_VALIDATORS, useExisting: CustomAsyncValidatorDirective, multi:
+ * true}]
+ * })
+ * class CustomAsyncValidatorDirective implements AsyncValidator {
+ *   validate(control: AbstractControl): Observable<ValidationErrors|null> {
+ *     return observableOf({'custom': true});
  *   }
  * }
  * ```
  *
- *
+ * @experimental
  */
-export interface Validator {
-  validate(c: AbstractControl): ValidationErrors|null;
-  registerOnValidatorChange?(fn: () => void): void;
-}
-
-/** @experimental */
 export interface AsyncValidator extends Validator {
-  validate(c: AbstractControl): Promise<ValidationErrors|null>|Observable<ValidationErrors|null>;
+  /**
+   * @description
+   * Method that performs async validation against the provided control.
+   *
+   * @param c The control to validate against.
+   *
+   * @returns A promise or observable that resolves a map of validation errors
+   * if validation fails, otherwise null.
+   */
+  validate(control: AbstractControl):
+      Promise<ValidationErrors|null>|Observable<ValidationErrors|null>;
 }
 
 export const REQUIRED_VALIDATOR: StaticProvider = {
@@ -64,13 +126,15 @@ export const CHECKBOX_REQUIRED_VALIDATOR: StaticProvider = {
  * A Directive that adds the `required` validator to any controls marked with the
  * `required` attribute, via the `NG_VALIDATORS` binding.
  *
+ * @usageNotes
  * ### Example
  *
  * ```
  * <input name="fullName" ngModel required>
  * ```
  *
- *
+ * @ngModule FormsModule
+ * @ngModule ReactiveFormsModule
  */
 @Directive({
   selector:
@@ -92,8 +156,8 @@ export class RequiredValidator implements Validator {
     if (this._onChange) this._onChange();
   }
 
-  validate(c: AbstractControl): ValidationErrors|null {
-    return this.required ? Validators.required(c) : null;
+  validate(control: AbstractControl): ValidationErrors|null {
+    return this.required ? Validators.required(control) : null;
   }
 
   registerOnValidatorChange(fn: () => void): void { this._onChange = fn; }
@@ -104,6 +168,7 @@ export class RequiredValidator implements Validator {
  * A Directive that adds the `required` validator to checkbox controls marked with the
  * `required` attribute, via the `NG_VALIDATORS` binding.
  *
+ * @usageNotes
  * ### Example
  *
  * ```
@@ -111,6 +176,8 @@ export class RequiredValidator implements Validator {
  * ```
  *
  * @experimental
+ * @ngModule FormsModule
+ * @ngModule ReactiveFormsModule
  */
 @Directive({
   selector:
@@ -119,8 +186,8 @@ export class RequiredValidator implements Validator {
   host: {'[attr.required]': 'required ? "" : null'}
 })
 export class CheckboxRequiredValidator extends RequiredValidator {
-  validate(c: AbstractControl): ValidationErrors|null {
-    return this.required ? Validators.requiredTrue(c) : null;
+  validate(control: AbstractControl): ValidationErrors|null {
+    return this.required ? Validators.requiredTrue(control) : null;
   }
 }
 
@@ -137,6 +204,7 @@ export const EMAIL_VALIDATOR: any = {
  * A Directive that adds the `email` validator to controls marked with the
  * `email` attribute, via the `NG_VALIDATORS` binding.
  *
+ * @usageNotes
  * ### Example
  *
  * ```
@@ -146,6 +214,8 @@ export const EMAIL_VALIDATOR: any = {
  * ```
  *
  * @experimental
+ * @ngModule FormsModule
+ * @ngModule ReactiveFormsModule
  */
 @Directive({
   selector: '[email][formControlName],[email][formControl],[email][ngModel]',
@@ -163,23 +233,24 @@ export class EmailValidator implements Validator {
     if (this._onChange) this._onChange();
   }
 
-  validate(c: AbstractControl): ValidationErrors|null {
-    return this._enabled ? Validators.email(c) : null;
+  validate(control: AbstractControl): ValidationErrors|null {
+    return this._enabled ? Validators.email(control) : null;
   }
 
   registerOnValidatorChange(fn: () => void): void { this._onChange = fn; }
 }
 
-export interface ValidatorFn { (c: AbstractControl): ValidationErrors|null; }
+export interface ValidatorFn { (control: AbstractControl): ValidationErrors|null; }
 
 export interface AsyncValidatorFn {
-  (c: AbstractControl): Promise<ValidationErrors|null>|Observable<ValidationErrors|null>;
+  (control: AbstractControl): Promise<ValidationErrors|null>|Observable<ValidationErrors|null>;
 }
 
 /**
  * Provider which adds `MinLengthValidator` to `NG_VALIDATORS`.
  *
- * ## Example:
+ * @usageNotes
+ * ### Example:
  *
  * {@example common/forms/ts/validators/validators.ts region='min'}
  */
@@ -193,7 +264,8 @@ export const MIN_LENGTH_VALIDATOR: any = {
  * A directive which installs the `MinLengthValidator` for any `formControlName`,
  * `formControl`, or control with `ngModel` that also has a `minlength` attribute.
  *
- *
+ * @ngModule FormsModule
+ * @ngModule ReactiveFormsModule
  */
 @Directive({
   selector: '[minlength][formControlName],[minlength][formControl],[minlength][ngModel]',
@@ -217,8 +289,8 @@ export class MinLengthValidator implements Validator,
     }
   }
 
-  validate(c: AbstractControl): ValidationErrors|null {
-    return this.minlength == null ? null : this._validator(c);
+  validate(control: AbstractControl): ValidationErrors|null {
+    return this.minlength == null ? null : this._validator(control);
   }
 
   registerOnValidatorChange(fn: () => void): void { this._onChange = fn; }
@@ -231,7 +303,8 @@ export class MinLengthValidator implements Validator,
 /**
  * Provider which adds `MaxLengthValidator` to `NG_VALIDATORS`.
  *
- * ## Example:
+ * @usageNotes
+ * ### Example:
  *
  * {@example common/forms/ts/validators/validators.ts region='max'}
  */
@@ -245,7 +318,8 @@ export const MAX_LENGTH_VALIDATOR: any = {
  * A directive which installs the `MaxLengthValidator` for any `formControlName`,
  * `formControl`, or control with `ngModel` that also has a `maxlength` attribute.
  *
- *
+ * @ngModule FormsModule
+ * @ngModule ReactiveFormsModule
  */
 @Directive({
   selector: '[maxlength][formControlName],[maxlength][formControl],[maxlength][ngModel]',
@@ -269,8 +343,8 @@ export class MaxLengthValidator implements Validator,
     }
   }
 
-  validate(c: AbstractControl): ValidationErrors|null {
-    return this.maxlength != null ? this._validator(c) : null;
+  validate(control: AbstractControl): ValidationErrors|null {
+    return this.maxlength != null ? this._validator(control) : null;
   }
 
   registerOnValidatorChange(fn: () => void): void { this._onChange = fn; }
@@ -294,12 +368,15 @@ export const PATTERN_VALIDATOR: any = {
  * as the regex to validate Control value against.  Follows pattern attribute
  * semantics; i.e. regex must match entire Control value.
  *
+ * @usageNotes
  * ### Example
  *
  * ```
  * <input [name]="fullName" pattern="[a-zA-Z ]*" ngModel>
  * ```
  *
+ * @ngModule FormsModule
+ * @ngModule ReactiveFormsModule
  */
 @Directive({
   selector: '[pattern][formControlName],[pattern][formControl],[pattern][ngModel]',
@@ -323,7 +400,7 @@ export class PatternValidator implements Validator,
     }
   }
 
-  validate(c: AbstractControl): ValidationErrors|null { return this._validator(c); }
+  validate(control: AbstractControl): ValidationErrors|null { return this._validator(control); }
 
   registerOnValidatorChange(fn: () => void): void { this._onChange = fn; }
 

@@ -1,3 +1,69 @@
+<a name="7.0.0-rc.0"></a>
+# [7.0.0-rc.0](https://github.com/angular/angular/compare/7.0.0-beta.7...7.0.0-rc.0) (2018-09-28)
+
+
+### Features
+
+* add support for TypeScript 3.1 ([#26151](https://github.com/angular/angular/issues/26151)) ([9993c72](https://github.com/angular/angular/commit/9993c72))
+
+
+
+<a name="7.0.0-beta.7"></a>
+# [7.0.0-beta.7](https://github.com/angular/angular/compare/7.0.0-beta.6...7.0.0-beta.7) (2018-09-26)
+
+
+### Bug Fixes
+
+* **core:** add missing `peerDependency ` to `[@angular](https://github.com/angular)/compiler` ([#26033](https://github.com/angular/angular/issues/26033)) ([549de1e](https://github.com/angular/angular/commit/549de1e)), closes [/github.com/angular/angular/commit/919f42fea1df4b9e38b7d688aef5f2de668e9d3e#diff-58563046c4439699f2e6a89187099a54](https://github.com//github.com/angular/angular/commit/919f42fea1df4b9e38b7d688aef5f2de668e9d3e/issues/diff-58563046c4439699f2e6a89187099a54)
+* **service-worker:** do not blow up when caches are unwritable ([#26042](https://github.com/angular/angular/issues/26042)) ([2bd767c](https://github.com/angular/angular/commit/2bd767c))
+
+
+### Features
+
+* **compiler-cli:** add support to extend `angularCompilerOptions` ([#22717](https://github.com/angular/angular/issues/22717)) ([d7e5bbf](https://github.com/angular/angular/commit/d7e5bbf)), closes [#22684](https://github.com/angular/angular/issues/22684)
+* **platform-server:** update domino to v2.1.0 ([#25564](https://github.com/angular/angular/issues/25564)) ([3fb0da2](https://github.com/angular/angular/commit/3fb0da2))
+
+
+
+<a name="6.1.9"></a>
+## [6.1.9](https://github.com/angular/angular/compare/6.1.8...6.1.9) (2018-09-26)
+
+
+### Bug Fixes
+
+* **service-worker:** do not blow up when caches are unwritable ([#26042](https://github.com/angular/angular/issues/26042)) ([a169743](https://github.com/angular/angular/commit/a169743))
+
+
+
+<a name="7.0.0-beta.6"></a>
+# [7.0.0-beta.6](https://github.com/angular/angular/compare/7.0.0-beta.5...7.0.0-beta.6) (2018-09-19)
+
+
+### Bug Fixes
+
+* **bazel:** specify the package and lock files using the workspace ([#25694](https://github.com/angular/angular/issues/25694)) ([ddc1335](https://github.com/angular/angular/commit/ddc1335))
+* **common:** register locale data for all equivalent closure locales ([#25867](https://github.com/angular/angular/issues/25867)) ([d83f9d4](https://github.com/angular/angular/commit/d83f9d4))
+* **compiler:** Fix look up of entryComponents in AOT Summaries ([#24892](https://github.com/angular/angular/issues/24892)) ([00d3666](https://github.com/angular/angular/commit/00d3666))
+* **ivy:** add [@nocollapse](https://github.com/nocollapse) when writing closure-annotated code ([#25775](https://github.com/angular/angular/issues/25775)) ([a0c4b2d](https://github.com/angular/angular/commit/a0c4b2d))
+* **ivy:** don't accidently read the inherited definition ([#25736](https://github.com/angular/angular/issues/25736)) ([d5bd86a](https://github.com/angular/angular/commit/d5bd86a)), closes [#24011](https://github.com/angular/angular/issues/24011) [#25026](https://github.com/angular/angular/issues/25026)
+* **ivy:** ensure Ivy *Ref classes derive from view engine equivalents ([#25775](https://github.com/angular/angular/issues/25775)) ([a9099e8](https://github.com/angular/angular/commit/a9099e8))
+* **ivy:** events should not mark views dirty by default ([#25969](https://github.com/angular/angular/issues/25969)) ([5653874](https://github.com/angular/angular/commit/5653874))
+* **ivy:** ngcc should compile entry-points in the correct order ([#25862](https://github.com/angular/angular/issues/25862)) ([9b1bb37](https://github.com/angular/angular/commit/9b1bb37))
+* **ivy:** use proper sanitizer names ([#25817](https://github.com/angular/angular/issues/25817)) ([21009b0](https://github.com/angular/angular/commit/21009b0)), closes [#25816](https://github.com/angular/angular/issues/25816)
+* **router:** mount correct component if router outlet was not instantiated and if using a route reuse strategy ([#25313](https://github.com/angular/angular/issues/25313)) ([#25314](https://github.com/angular/angular/issues/25314)) ([8dc2b11](https://github.com/angular/angular/commit/8dc2b11))
+
+
+### Features
+
+* **bazel:** add additional parameters to `ts_api_guardian_test` def ([#25694](https://github.com/angular/angular/issues/25694)) ([2a21ca0](https://github.com/angular/angular/commit/2a21ca0))
+* **ivy:** allow combined context discovery for components, directives and elements ([#25754](https://github.com/angular/angular/issues/25754)) ([62be8c2](https://github.com/angular/angular/commit/62be8c2))
+* **ivy:** patch animations into metadata ([#25828](https://github.com/angular/angular/issues/25828)) ([d2dfd48](https://github.com/angular/angular/commit/d2dfd48))
+* **ivy:** resolve references to vars in .d.ts files ([#25775](https://github.com/angular/angular/issues/25775)) ([96d6b79](https://github.com/angular/angular/commit/96d6b79))
+* **ivy:** support animation [@triggers](https://github.com/triggers) in templates ([#25849](https://github.com/angular/angular/issues/25849)) ([e363388](https://github.com/angular/angular/commit/e363388))
+* **ivy:** support bootstrap in ngModuleDef ([#25775](https://github.com/angular/angular/issues/25775)) ([13ccdfd](https://github.com/angular/angular/commit/13ccdfd))
+
+
+
 <a name="7.0.0-beta.5"></a>
 # [7.0.0-beta.5](https://github.com/angular/angular/compare/7.0.0-beta.4...7.0.0-beta.5) (2018-09-06)
 
@@ -33,12 +99,6 @@
 * **core:** size regression with closure compiler ([#25531](https://github.com/angular/angular/issues/25531)) ([ebcf762](https://github.com/angular/angular/commit/ebcf762))
 * **docs-infra:** show "suggest edits" only for /guide and /tutorial dirs ([#24378](https://github.com/angular/angular/issues/24378)) ([66b7870](https://github.com/angular/angular/commit/66b7870))
 * **upgrade:** trigger `$destroy` event on upgraded component element ([#25357](https://github.com/angular/angular/issues/25357)) ([82e0676](https://github.com/angular/angular/commit/82e0676)), closes [#25334](https://github.com/angular/angular/issues/25334)
-
-
-### Features
-
-* **docs-infra:** add "suggest edits" feature to all docs ([#24378](https://github.com/angular/angular/issues/24378)) ([82088a8](https://github.com/angular/angular/commit/82088a8))
-* **docs-infra:** disable "status" selector in API list when displaying only packages ([#25718](https://github.com/angular/angular/issues/25718)) ([6f7df8a](https://github.com/angular/angular/commit/6f7df8a)), closes [#25708](https://github.com/angular/angular/issues/25708)
 * **router:** warn if navigation triggered outside Angular zone ([#24959](https://github.com/angular/angular/issues/24959)) ([23a96dc](https://github.com/angular/angular/commit/23a96dc)), closes [#15770](https://github.com/angular/angular/issues/15770) [#15946](https://github.com/angular/angular/issues/15946) [#24728](https://github.com/angular/angular/issues/24728)
 
 

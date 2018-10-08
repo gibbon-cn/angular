@@ -27,7 +27,7 @@ import {typeWithParameters} from '../util';
 
 import {R3ComponentDef, R3ComponentMetadata, R3DirectiveDef, R3DirectiveMetadata, R3QueryMetadata} from './api';
 import {BindingScope, TemplateDefinitionBuilder, ValueConverter, renderFlagCheckIfStmt} from './template';
-import {CONTEXT_NAME, DefinitionMap, RENDER_FLAGS, TEMPORARY_NAME, asLiteral, conditionallyCreateMapObjectLiteral, getQueryPredicate, temporaryAllocator} from './util';
+import {CONTEXT_NAME, DefinitionMap, RENDER_FLAGS, TEMPORARY_NAME, asLiteral, conditionallyCreateMapObjectLiteral, getQueryPredicate, mapToExpression, temporaryAllocator} from './util';
 
 const EMPTY_ARRAY: any[] = [];
 
@@ -43,7 +43,7 @@ function baseDirectiveFields(
   definitionMap.set('selectors', createDirectiveSelector(meta.selector !));
 
 
-  // e.g. `factory: () => new MyApp(injectElementRef())`
+  // e.g. `factory: () => new MyApp(directiveInject(ElementRef))`
   const result = compileFactoryFunction({
     name: meta.name,
     type: meta.type,
@@ -117,10 +117,7 @@ export function compileDirectiveFromMetadata(
   // string literal, which must be on one line.
   const selectorForType = (meta.selector || '').replace(/\n/g, '');
 
-  const type = new o.ExpressionType(o.importExpr(R3.DirectiveDef, [
-    typeWithParameters(meta.type, meta.typeArgumentCount),
-    new o.ExpressionType(o.literal(selectorForType))
-  ]));
+  const type = createTypeForDef(meta, R3.DirectiveDefWithMeta);
   return {expression, type, statements};
 }
 
@@ -246,15 +243,18 @@ export function compileComponentFromMetadata(
     definitionMap.set('styles', o.literalArr(strings));
   }
 
+  // e.g. `animations: [trigger('123', [])]`
+  if (meta.animations) {
+    const animationValues = meta.animations.map(entry => mapToExpression(entry));
+    definitionMap.set('animations', o.literalArr(animationValues));
+  }
+
   // On the type side, remove newlines from the selector as it will need to fit into a TypeScript
   // string literal, which must be on one line.
   const selectorForType = (meta.selector || '').replace(/\n/g, '');
 
   const expression = o.importExpr(R3.defineComponent).callFn([definitionMap.toLiteralMap()]);
-  const type = new o.ExpressionType(o.importExpr(R3.ComponentDef, [
-    typeWithParameters(meta.type, meta.typeArgumentCount),
-    new o.ExpressionType(o.literal(selectorForType))
-  ]));
+  const type = createTypeForDef(meta, R3.ComponentDefWithMeta);
 
   return {expression, type, statements};
 }
@@ -301,6 +301,7 @@ export function compileComponentFromRender2(
   const definitionField = outputCtx.constantPool.propertyNameOf(DefinitionKind.Component);
 
   const summary = component.toSummary();
+  const animations = summary.template && summary.template.animations || null;
 
   // Compute the R3ComponentMetadata from the CompileDirectiveMetadata
   const meta: R3ComponentMetadata = {
@@ -318,7 +319,8 @@ export function compileComponentFromRender2(
     wrapDirectivesInClosure: false,
     styles: (summary.template && summary.template.styles) || EMPTY_ARRAY,
     encapsulation:
-        (summary.template && summary.template.encapsulation) || core.ViewEncapsulation.Emulated
+        (summary.template && summary.template.encapsulation) || core.ViewEncapsulation.Emulated,
+    animations
   };
   const res = compileComponentFromMetadata(meta, outputCtx.constantPool, bindingParser);
 
@@ -499,6 +501,39 @@ function createContentQueriesRefreshFunction(meta: R3DirectiveMetadata): o.Expre
   }
 
   return null;
+}
+
+function stringAsType(str: string): o.Type {
+  return o.expressionType(o.literal(str));
+}
+
+function stringMapAsType(map: {[key: string]: string}): o.Type {
+  const mapValues = Object.keys(map).map(key => ({
+                                           key,
+                                           value: o.literal(map[key]),
+                                           quoted: true,
+                                         }));
+  return o.expressionType(o.literalMap(mapValues));
+}
+
+function stringArrayAsType(arr: string[]): o.Type {
+  return arr.length > 0 ? o.expressionType(o.literalArr(arr.map(value => o.literal(value)))) :
+                          o.NONE_TYPE;
+}
+
+function createTypeForDef(meta: R3DirectiveMetadata, typeBase: o.ExternalReference): o.Type {
+  // On the type side, remove newlines from the selector as it will need to fit into a TypeScript
+  // string literal, which must be on one line.
+  const selectorForType = (meta.selector || '').replace(/\n/g, '');
+
+  return o.expressionType(o.importExpr(typeBase, [
+    typeWithParameters(meta.type, meta.typeArgumentCount),
+    stringAsType(selectorForType),
+    meta.exportAs !== null ? stringAsType(meta.exportAs) : o.NONE_TYPE,
+    stringMapAsType(meta.inputs),
+    stringMapAsType(meta.outputs),
+    stringArrayAsType(meta.queries.map(q => q.propertyName)),
+  ]));
 }
 
 // Define and update any view queries

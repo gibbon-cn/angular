@@ -8,7 +8,7 @@
 
 import {ApplicationRef} from '../application_ref';
 import {Provider} from '../di/provider';
-import {R3_COMPILE_NGMODULE} from '../ivy_switch';
+import {R3_COMPILE_NGMODULE} from '../ivy_switch/compiler/index';
 import {Type} from '../type';
 import {TypeDecorator, makeDecorator} from '../util/decorators';
 
@@ -26,11 +26,7 @@ export interface NgModuleTransitiveScopes {
   exported: {directives: Set<any>; pipes: Set<any>;};
 }
 
-/**
- * A version of {@link NgModuleDef} that represents the runtime type shape only, and excludes
- * metadata parameters.
- */
-export type NgModuleDefInternal<T> = NgModuleDef<T, any, any, any>;
+export type NgModuleDefWithMeta<T, Declarations, Imports, Exports> = NgModuleDef<T>;
 
 /**
  * Runtime link information for NgModules.
@@ -42,7 +38,7 @@ export type NgModuleDefInternal<T> = NgModuleDef<T, any, any, any>;
  * never create the object directly since the shape of this object
  * can change between versions.
  */
-export interface NgModuleDef<T, Declarations, Imports, Exports> {
+export interface NgModuleDef<T> {
   /** Token representing the module. Used by DI. */
   type: T;
 
@@ -75,16 +71,17 @@ export interface NgModuleDef<T, Declarations, Imports, Exports> {
  * @param T the module type. In Ivy applications, this must be explicitly
  * provided.
  */
-export interface ModuleWithProviders<T = any> {
+export interface ModuleWithProviders<
+    T = any /** TODO(alxhub): remove default when callers pass explicit type param */> {
   ngModule: Type<T>;
   providers?: Provider[];
 }
 
 /**
  * A schema definition associated with an NgModule.
- * 
+ *
  * @see `@NgModule`, `CUSTOM_ELEMENTS_SCHEMA`, `NO_ERRORS_SCHEMA`
- * 
+ *
  * @param name The name of a defined schema.
  *
  * @experimental
@@ -135,9 +132,13 @@ export interface NgModule {
   /**
    * The set of injectable objects that are available in the injector
    * of this module.
+<<<<<<< HEAD
    * 
    * 在模块的注入器中可用的可注入对象的集合
    * 
+=======
+   *
+>>>>>>> upstream/master
    * @see [Dependency Injection guide](guide/dependency-injection)
    * @see [NgModule guide](guide/providers)
    * 
@@ -149,21 +150,29 @@ export interface NgModule {
    * into any component, directive, pipe or service that is a child of this injector.
    * The NgModule used for bootstrapping uses the root injector, and can provide dependencies
    * to any part of the app.
+<<<<<<< HEAD
    * 
    * 被依赖项的提供者列举在这里。对于此注入器的所有孩子，包括组件、指令、管道和服务，这些被依赖项
    * 都可以作为注入项而可用。
    * 
+=======
+   *
+>>>>>>> upstream/master
    * A lazy-loaded module has its own injector, typically a child of the app root injector.
    * Lazy-loaded services are scoped to the lazy-loaded module's injector.
    * If a lazy-loaded module also provides the `UserService`, any component created
    * within that module's context (such as by router navigation) gets the local instance
-   * of the service, not the instance in the root injector. 
+   * of the service, not the instance in the root injector.
    * Components in external modules continue to receive the instance provided by their injectors.
+<<<<<<< HEAD
    * 
    * 懒加载模块有自己的注入器，通常是应用根注入器的孩子。懒加载服务被scoped to懒加载模块的注入器。
    * 如果懒加载模块提供了UserService，在本模块上下文语境（例如路由导航）内创建的任何组件会得到这个服务的本地实例，
    * 而不是在根注入器的实例。外部模块的组件继续获得由他们的注入器所提供的实例。
    * 
+=======
+   *
+>>>>>>> upstream/master
    * ### Example
    *
    * The following example defines a class that is injected in
@@ -259,7 +268,7 @@ export interface NgModule {
    * ```
    *
    */
-  imports?: Array<Type<any>|ModuleWithProviders|any[]>;
+  imports?: Array<Type<any>|ModuleWithProviders<{}>|any[]>;
 
   /**
    * The set of components, directives, and pipes declared in this

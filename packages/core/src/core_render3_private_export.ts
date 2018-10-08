@@ -21,10 +21,6 @@ export {
   DirectiveType as ɵDirectiveType,
   RenderFlags as ɵRenderFlags,
   directiveInject as ɵdirectiveInject,
-  injectElementRef as ɵinjectElementRef,
-  injectTemplateRef as ɵinjectTemplateRef,
-  injectViewContainerRef as ɵinjectViewContainerRef,
-  injectChangeDetectorRef as ɵinjectChangeDetectorRef,
   injectRenderer2 as ɵinjectRenderer2,
   injectAttribute as ɵinjectAttribute,
   getFactoryOf as ɵgetFactoryOf,
@@ -88,10 +84,12 @@ export {
   elementProperty as ɵelementProperty,
   projectionDef as ɵprojectionDef,
   reference as ɵreference,
+  enableBindings as ɵenableBindings,
+  disableBindings as ɵdisableBindings,
   elementAttribute as ɵelementAttribute,
   elementStyling as ɵelementStyling,
   elementStylingMap as ɵelementStylingMap,
-  elementStyleProp as ɵelementStylingProp,
+  elementStyleProp as ɵelementStyleProp,
   elementStylingApply as ɵelementStylingApply,
   elementClassProp as ɵelementClassProp,
   textBinding as ɵtextBinding,
@@ -102,9 +100,11 @@ export {
   pipe as ɵpipe,
   BaseDef as ɵBaseDef,
   ComponentDef as ɵComponentDef,
-  ComponentDefInternal as ɵComponentDefInternal,
+  ComponentDefWithMeta as ɵComponentDefWithMeta,
   DirectiveDef as ɵDirectiveDef,
+  DirectiveDefWithMeta as ɵDirectiveDefWithMeta,
   PipeDef as ɵPipeDef,
+  PipeDefWithMeta as ɵPipeDefWithMeta,
   whenRendered as ɵwhenRendered,
   i18nApply as ɵi18nApply,
   i18nExpMapping as ɵi18nExpMapping,
@@ -120,29 +120,23 @@ export {
   i18nMapping as ɵi18nMapping,
   I18nInstruction as ɵI18nInstruction,
   I18nExpInstruction as ɵI18nExpInstruction,
-  WRAP_RENDERER_FACTORY2 as ɵWRAP_RENDERER_FACTORY2,
+  WRAP_RENDERER_FACTORY2 as ɵWRAP_RENDERER_FACTORY2
 } from './render3/index';
 
 export {  Render3DebugRendererFactory2 as ɵRender3DebugRendererFactory2 } from './render3/debug';
 
 
 export {
-  compileNgModuleDefs as ɵcompileNgModuleDefs,
-  patchComponentDefWithScope as ɵpatchComponentDefWithScope,
-} from './render3/jit/module';
-
-export {
-  compileComponent as ɵcompileComponent,
-  compileDirective as ɵcompileDirective,
-} from './render3/jit/directive';
-
-export {
-  compilePipe as ɵcompilePipe,
-} from './render3/jit/pipe';
+  R3_COMPILE_NGMODULE_DEFS as ɵcompileNgModuleDefs,
+  R3_PATCH_COMPONENT_DEF_WTIH_SCOPE as ɵpatchComponentDefWithScope,
+  R3_COMPILE_COMPONENT as ɵcompileComponent,
+  R3_COMPILE_DIRECTIVE as ɵcompileDirective,
+  R3_COMPILE_PIPE as ɵcompilePipe,
+} from './ivy_switch/compiler/ivy_switch_on';
 
 export {
   NgModuleDef as ɵNgModuleDef,
-  NgModuleDefInternal as ɵNgModuleDefInternal,
+  NgModuleDefWithMeta as ɵNgModuleDefWithMeta,
   NgModuleTransitiveScopes as ɵNgModuleTransitiveScopes,
 } from './metadata/ng_module';
 
@@ -162,20 +156,43 @@ export {
 } from './sanitization/bypass';
 
 export {
-  ElementContext as ɵElementContext,
-  getElementContext as ɵgetElementContext
-} from './render3/element_discovery';
+  LContext as ɵLContext,
+  getContext as ɵgetContext
+} from './render3/context_discovery';
+
+export {
+  Player as ɵPlayer,
+  PlayState as ɵPlayState,
+  PlayerHandler as ɵPlayerHandler,
+} from './render3/interfaces/player';
+
+export {
+  addPlayer as ɵaddPlayer,
+  getPlayers as ɵgetPlayers,
+} from './render3/player';
 
 // we reexport these symbols just so that they are retained during the dead code elimination
 // performed by rollup while it's creating fesm files.
 //
 // no code actually imports these symbols from the @angular/core entry point
 export {
+  compileNgModuleFactory__POST_NGCC__ as ɵcompileNgModuleFactory__POST_NGCC__
+} from './application_ref';
+export {
   R3_COMPILE_COMPONENT__POST_NGCC__ as ɵR3_COMPILE_COMPONENT__POST_NGCC__,
   R3_COMPILE_DIRECTIVE__POST_NGCC__ as ɵR3_COMPILE_DIRECTIVE__POST_NGCC__,
   R3_COMPILE_INJECTABLE__POST_NGCC__ as ɵR3_COMPILE_INJECTABLE__POST_NGCC__,
   R3_COMPILE_NGMODULE__POST_NGCC__ as ɵR3_COMPILE_NGMODULE__POST_NGCC__,
   R3_COMPILE_PIPE__POST_NGCC__ as ɵR3_COMPILE_PIPE__POST_NGCC__,
-  ivyEnable__POST_NGCC__ as ɵivyEnable__POST_NGCC__
-} from './ivy_switch_legacy';
+  ivyEnable__POST_NGCC__ as ɵivyEnable__POST_NGCC__,
+} from './ivy_switch/compiler/legacy';
+
+export {
+  R3_ELEMENT_REF_FACTORY__POST_NGCC__ as ɵR3_ELEMENT_REF_FACTORY__POST_NGCC__,
+  R3_TEMPLATE_REF_FACTORY__POST_NGCC__ as ɵR3_TEMPLATE_REF_FACTORY__POST_NGCC__,
+  R3_CHANGE_DETECTOR_REF_FACTORY__POST_NGCC__ as ɵR3_CHANGE_DETECTOR_REF_FACTORY__POST_NGCC__,
+  R3_VIEW_CONTAINER_REF_FACTORY__POST_NGCC__ as ɵR3_VIEW_CONTAINER_REF_FACTORY__POST_NGCC__,
+} from './ivy_switch/runtime/legacy';
+
+
 // clang-format on
